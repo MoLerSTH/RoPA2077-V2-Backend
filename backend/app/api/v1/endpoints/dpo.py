@@ -1,9 +1,12 @@
 # app/api/v1/dpo.py
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from app.database import db_dependency
 from sqlalchemy import select
 from app.models.ropa import RopaRecord
 from starlette import status
+
+from backend.app.api.v1.endpoints.auth import get_current_user
+from backend.app.schemas.users import UserResponse
 
 router = APIRouter()
 
@@ -41,12 +44,13 @@ async def reject_record(record_id: int, db: db_dependency, rejection_reason: str
 
 # approval
 @router.put("/records/{record_id}/approve", status_code=status.HTTP_200_OK)
-async def approve_record(record_id: int, db: db_dependency):
+async def approve_record(record_id: int, db: db_dependency, user: UserResponse = Depends(get_current_user)):
     result = db.execute(select(RopaRecord).where(RopaRecord.id == record_id))
     record = result.scalar_one_or_none()
     if record is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Record not found")
     record.status = "Approved"
+    record.approved_by = user.username,
     db.commit()
     db.refresh(record)
     return {"message": "Record approved successfully", 

@@ -1,0 +1,7 @@
+fastapi[standard]
+SQLAlchemy
+pyjwt
+pwdlib[argon2]
+cryptography
+starlette
+psycopg2-binary

@@ -5,3 +5,6 @@ pwdlib[argon2]
 cryptography
 starlette
 psycopg2-binary
+pandas
+openpyxl 
+python-multipart

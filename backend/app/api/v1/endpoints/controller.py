@@ -10,6 +10,8 @@ from app.schemas.users import UserCreate, UserResponse
 from pwdlib import PasswordHash
 from starlette import status
 from app.api.v1.endpoints.auth import get_current_user
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 router = APIRouter(prefix="/controller")
 def clean_data(val):
@@ -30,17 +32,22 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
         
         # 2. อ่านไฟล์ตามประเภทนามสกุล ให้กลายเป็น DataFrame (df)
         if file.filename.endswith(('.xlsx', '.xls')):
-            # ถ้าเป็น Excel ให้อ่านด้วย read_excel
             df = pd.read_excel(io.BytesIO(contents), header=None)
         else:
-            # ถ้าเป็น CSV ให้อ่านด้วย read_csv
             df = pd.read_csv(io.BytesIO(contents), header=None)
+            
+        # Helper ฟังก์ชันทำความสะอาดข้อมูล (กันค่า Null หรือ NaN จาก Pandas)
+        def clean_data(val):
+            if pd.isna(val):
+                return ""
+            return str(val).strip()
         
         # 3. ดึงข้อมูลส่วน Metadata ด้านบน (ผู้ลงบันทึก)
-        recorder_name = clean_data(df.iloc[1, 2]) if len(df) > 1 else None
-        recorder_addr = clean_data(df.iloc[2, 2]) if len(df) > 2 else None
-        recorder_email = clean_data(df.iloc[3, 2]) if len(df) > 3 else None
-        recorder_phone = clean_data(df.iloc[4, 2]) if len(df) > 4 else None
+        # ปรับ Index ให้ตรงกับไฟล์ใหม่: ชื่อ(Index 2), ที่อยู่(Index 3), Email(Index 4), เบอร์(Index 5)
+        recorder_name = clean_data(df.iloc[2, 2]) if len(df) > 2 else ""
+        recorder_addr = clean_data(df.iloc[3, 2]) if len(df) > 3 else ""
+        recorder_email = clean_data(df.iloc[4, 2]) if len(df) > 4 else ""
+        recorder_phone = clean_data(df.iloc[5, 2]) if len(df) > 5 else ""
 
         # 4. ตัดเอาเฉพาะส่วนที่เป็นตารางข้อมูล (เริ่มที่ Row 15 / Index 14)
         table_data = df.iloc[14:].copy()
@@ -53,12 +60,9 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
             if pd.isna(row[3]) or str(row[3]).strip() == "":
                 continue
             
-            # จัดการเงื่อนไข is_direct_from_controller
+            # จัดการเงื่อนไข Tick box (ü) ใน Excel/CSV ให้เป็น string 'true'
             raw_direct_controller = clean_data(row[9])
-            if raw_direct_controller == 'ü':
-                is_direct_value = 'true'
-            else:
-                is_direct_value = raw_direct_controller
+            is_direct_value = 'true' if raw_direct_controller == 'ü' else raw_direct_controller
                 
             new_record = RopaRecord(
                 # --- Metadata & Default Fields ---
@@ -71,43 +75,48 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 recorder_address=recorder_addr,
                 recorder_email=recorder_email,
                 recorder_phone=recorder_phone,
+                created_at=datetime.now(ZoneInfo("Asia/Bangkok")),
+                updated_by = recorder_name,
+                updated_at = datetime.now(ZoneInfo("Asia/Bangkok")),
 
                 # --- Section 1: ข้อมูลผู้ควบคุม/ผู้ประมวลผล ---
-                processor_name=clean_data(row[1]),
-                controller_address=clean_data(row[2]),
+                processor_name=clean_data(row[1]),        # Col 1: 1. ชื่อผู้ประมวลผลข้อมูลส่วนบุคคล
+                controller_address=clean_data(row[2]),    # Col 2: 2. ที่อยู่ผู้ควบคุมข้อมูลส่วนบุคคล
                 
                 # --- Section 2: รายละเอียดกิจกรรมประมวลผล ---
-                activity_name=clean_data(row[3]),
-                purpose=clean_data(row[4]),
-                collected_personal_data=clean_data(row[5]),
-                data_subject=clean_data(row[6]),
-                data_type=clean_data(row[7]),
-                collection_format=clean_data(row[8]),
+                activity_name=clean_data(row[3]),         # Col 3: 3. กิจกรรมประมวลผล
+                purpose=clean_data(row[4]),               # Col 4: 4. วัตถุประสงค์
+                collected_personal_data=clean_data(row[5]),# Col 5: 5. ข้อมูลส่วนบุคคลที่จัดเก็บ
+                data_subject_category=clean_data(row[6]), # Col 6: 6. หมวดหมู่ของข้อมูล
+                data_type=clean_data(row[7]),             # Col 7: 7. ประเภทของข้อมูล
+                collection_format=clean_data(row[8]),     # Col 8: 8. วิธีการได้มาซึ่งข้อมูล
                 
                 # --- Section 3: แหล่งที่มา และ ฐานกฎหมาย ---
-                is_direct_from_controller=is_direct_value,
-                indirect_source_detail=clean_data(row[10]),
-                legal_basis=clean_data(row[11]),
+                is_direct_from_controller=is_direct_value,  # Col 9: 9. แหล่งที่ได้มา (จากเจ้าของโดยตรง)
+                indirect_source_detail=clean_data(row[10]), # Col 10: 9. แหล่งที่ได้มา (จากแหล่งอื่น)
+                legal_basis=clean_data(row[11]),            # Col 11: 10. ฐานในการประมวลผล
                 
-                # --- Section 4: การส่งข้อมูลต่างประเทศ และ นโยบายการจัดเก็บ ---
-                cb_is_transferred=clean_data(row[12]),
-                cb_is_intra_group=clean_data(row[13]),
-                cb_transfer_method=clean_data(row[14]),
-                cb_destination_standard=clean_data(row[15]),
-                disclosure_without_consent=clean_data(row[16]),
+                # --- Section 4: การส่งข้อมูลต่างประเทศ ---
+                cb_is_transferred=clean_data(row[12]),       # Col 12: 11. ส่งข้อมูลไปต่างประเทศหรือไม่
+                cb_is_intra_group=clean_data(row[13]),       # Col 13: บริษัทในเครือหรือไม่
+                cb_transfer_method=clean_data(row[14]),      # Col 14: วิธีการโอนข้อมูล
+                cb_destination_standard=clean_data(row[15]), # Col 15: มาตรฐานประเทศปลายทาง
+                cb_section_28_exception=clean_data(row[16]), # Col 16: ข้อยกเว้นตามมาตรา 28 (แก้ไขจาก disclosure_without_consent)
                 
-                rp_storage_method=clean_data(row[18]),
-                rp_retention_period=clean_data(row[19]),
-                rp_access_rights=clean_data(row[20]),
-                rp_destruction_method=clean_data(row[21]),
+                # --- Section 5: นโยบายการเก็บรักษาข้อมูล ---
+                rp_storage_format=clean_data(row[17]),       # Col 17: 12. ประเภทของข้อมูลที่จัดเก็บ (Soft/Hard)
+                rp_storage_method=clean_data(row[18]),       # Col 18: วิธีการเก็บรักษาข้อมูล
+                rp_retention_period=clean_data(row[19]),     # Col 19: ระยะเวลาการเก็บรักษา
+                rp_access_rights=clean_data(row[20]),        # Col 20: สิทธิและวิธีการเข้าถึง
+                rp_destruction_method=clean_data(row[21]),   # Col 21: วิธีการลบหรือทำลาย
                 
-                # --- Section 5: มาตรการความมั่นคงปลอดภัย ---
-                sec_organizational=clean_data(row[22]),
-                sec_technical=clean_data(row[23]),
-                sec_physical=clean_data(row[24]),
-                sec_access_control=clean_data(row[25]),
-                sec_user_responsibility=clean_data(row[26]),
-                sec_audit_trail=clean_data(row[27])
+                # --- Section 6: มาตรการความมั่นคงปลอดภัย ---
+                sec_organizational=clean_data(row[22]),      # Col 22: 13. มาตรการเชิงองค์กร
+                sec_technical=clean_data(row[23]),           # Col 23: มาตรการเชิงเทคนิค
+                sec_physical=clean_data(row[24]),            # Col 24: มาตรการทางกายภาพ
+                sec_access_control=clean_data(row[25]),      # Col 25: การควบคุมการเข้าถึง
+                sec_user_responsibility=clean_data(row[26]), # Col 26: การกำหนดหน้าที่ความรับผิดชอบ
+                sec_audit_trail=clean_data(row[27])          # Col 27: มาตรการตรวจสอบย้อนหลัง
             )
             records_to_insert.append(new_record)
 
@@ -118,13 +127,13 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
 
         return {
             "status": "success", 
-            "message": f"ดึงข้อมูลผู้ลงบันทึก: {recorder_name} และนำเข้าข้อมูล ROPA สำเร็จจำนวน {len(records_to_insert)} รายการ (จากไฟล์ {file.filename})"
+            "message": f"ผู้ลงบันทึก: {recorder_name} นำเข้าข้อมูล ROPA สำเร็จจำนวน {len(records_to_insert)} รายการ"
         }
 
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาดในการประมวลผลไฟล์: {str(e)}")
- 
+  
 @router.post("/create", response_model=RopaResponse)
 async def create_ropa_record(ropa: RopaCreate, db: db_dependency ,user: UserResponse = Depends(get_current_user)):
     new_record = RopaRecord(
@@ -178,9 +187,9 @@ async def create_ropa_record(ropa: RopaCreate, db: db_dependency ,user: UserResp
 
         # Audit Logs & Admin Fields
         created_by=user.username,
-        created_at=func.now(),
+        created_at=datetime.now(ZoneInfo("Asia/Bangkok")),
         updated_by=user.username,
-        updated_at=func.now(),
+        updated_at=datetime.now(ZoneInfo("Asia/Bangkok")),
         approved_by=None,
         rejection_reason=None
     )
@@ -241,7 +250,7 @@ async def mock_create_ropa_record(ropa: RopaCreate, db: db_dependency):
 
         # Audit Logs & Admin Fields
         created_by="John Doe",
-        created_at=func.now(),
+        created_at=datetime.now(ZoneInfo("Asia/Bangkok")),
         updated_by="John Doe",
         updated_at=func.now(),
         approved_by=None,
@@ -274,6 +283,7 @@ async def update_ropa_record(record_id: int, ropa_update: RopaCreate, db: db_dep
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Record not found")
     
     # Update fields
+    record.updated_at=datetime.now(ZoneInfo("Asia/Bangkok")),
     record.department=ropa_update.department,
     record.status = ropa_update.status
     record.processor_name = ropa_update.processor_name

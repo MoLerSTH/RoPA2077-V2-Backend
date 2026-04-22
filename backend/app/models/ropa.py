@@ -21,9 +21,9 @@ class RopaRecord(Base):
     activity_name = Column(String(255), index=True)      # กิจกรรมประมวลผล (Activity Name)
     purpose = Column(Text)                               # วัตถุประสงค์ของการประมวลผล (Purpose)
     data_subject = Column(String(255))          # หมวดหมู่ของข้อมูล/เจ้าของข้อมูล (Data Subject)
-    collected_personal_data = Column(Text)               # ข้อมูลส่วนบุคคลที่จัดเก็บ
+    collected_personal_data = Column(Text, nullable=True)               # ข้อมูลส่วนบุคคลที่จัดเก็บ
     data_type = Column(String(255))                      # ประเภทของข้อมูล (ทั่วไป / อ่อนไหว)
-    collection_format = Column(String(255))              # วิธีการได้มาซึ่งข้อมูล (Soft File / Hard Copy)
+    collection_format = Column(Text, nullable=True)              # วิธีการได้มาซึ่งข้อมูล (Soft File / Hard Copy)
 
     # 4. แหล่งที่มา และ ฐานกฎหมาย (Section 3)
     is_direct_from_subject = Column(String(50))          # รับจากเจ้าของข้อมูลโดยตรงหรือไม่ (Controller)

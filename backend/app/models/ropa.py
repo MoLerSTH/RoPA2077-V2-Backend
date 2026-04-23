@@ -38,7 +38,9 @@ class RopaRecord(Base):
     cb_is_intra_group = Column(String(50))               # ส่งให้บริษัทในเครือต่างประเทศ?
     cb_transfer_method = Column(String(255), nullable=True)      # วิธีการโอนข้อมูล
     cb_destination_standard = Column(String(255), nullable=True) # มาตรฐานประเทศปลายทาง
-    
+    cb_section_28_exception = Column(String(255), nullable=True)
+
+    rp_storage_format = Column(String(255), nullable=True)
     rp_storage_method = Column(String(255), nullable=True)       # วิธีการเก็บรักษาข้อมูล
     rp_retention_period = Column(String(255), nullable=True)     # ระยะเวลาเก็บรักษา
     rp_access_rights = Column(String(255), nullable=True)        # สิทธิ/วิธีการเข้าถึงข้อมูล

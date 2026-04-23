@@ -63,7 +63,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 continue
 
             raw_direct = clean_data(row[8])
-            is_direct_value = 'true' if raw_direct == 'ü' else raw_direct
+            # is_direct_value = 'true' if raw_direct == 'ü' else raw_direct
 
             new_record = RopaRecord(
                 # ── Metadata & Default ──

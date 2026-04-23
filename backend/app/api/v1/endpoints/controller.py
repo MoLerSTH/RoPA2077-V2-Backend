@@ -81,7 +81,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 updated_at=datetime.now(ZoneInfo("Asia/Bangkok")),
 
                 # ── Section 1: ข้อมูลผู้ควบคุม ──
-                processor_name=clean_data(row[1]),          # Col 1: ชื่อผู้ควบคุม
+                controller_info=clean_data(row[1]),          # Col 1: ชื่อผู้ควบคุม
 
                 # ── Section 2: รายละเอียดกิจกรรม ──
                 activity_name=clean_data(row[2]),      # Col 2: กิจกรรมประมวลผล  ⚠️ ชื่อ field ควรเปลี่ยนเป็น activity_name

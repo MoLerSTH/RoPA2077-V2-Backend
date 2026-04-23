@@ -66,7 +66,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 
             new_record = RopaRecord(
                 # --- Metadata & Default Fields ---
-                record_type="Processor",
+                record_type="Controller",
                 request_type="สร้างรายการใหม่",
                 status="Pending",
                 

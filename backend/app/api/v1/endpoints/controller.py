@@ -62,8 +62,8 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
             if pd.isna(row[2]) or str(row[2]).strip() == "":
                 continue
 
-            raw_direct = clean_data(row[8])
-            is_direct_value = 'true' if raw_direct == 'ü' else raw_direct
+            raw_direct_controller = clean_data(row[8])
+            is_direct_value = 'true' if raw_direct_controller == 'ü' else raw_direct_controller
 
             new_record = RopaRecord(
                 # ── Metadata & Default ──
@@ -92,7 +92,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 collection_format=clean_data(row[7]),               # Col 7: วิธีการได้มา
 
                 # ── Section 3: แหล่งที่มา & ฐานกฎหมาย ──
-                is_direct_from_subject=clean_data(row[8]),       # Col 8: จากเจ้าของโดยตรง (ü)  ← is_direct
+                is_direct_from_subject=is_direct_value,       # Col 8: จากเจ้าของโดยตรง (ü)  ← is_direct
                                                               # Col 8: ü → true
                 indirect_source_detail=clean_data(row[9]),  # Col 9: จากแหล่งอื่น
                 legal_basis=clean_data(row[10]),            # Col 10: ✅ แก้จาก 11

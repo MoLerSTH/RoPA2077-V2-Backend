@@ -84,16 +84,16 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 processor_name=clean_data(row[1]),          # Col 1: ชื่อผู้ควบคุม
 
                 # ── Section 2: รายละเอียดกิจกรรม ──
-                controller_address=clean_data(row[2]),      # Col 2: กิจกรรมประมวลผล  ⚠️ ชื่อ field ควรเปลี่ยนเป็น activity_name
-                activity_name=clean_data(row[3]),           # Col 3: วัตถุประสงค์
-                purpose=clean_data(row[4]),                 # Col 4: ข้อมูลส่วนบุคคลที่จัดเก็บ
-                collected_personal_data=clean_data(row[5]), # Col 5: หมวดหมู่ข้อมูล
-                data_subject=clean_data(row[6]),   # Col 6: ประเภทข้อมูล
-                data_type=clean_data(row[7]),               # Col 7: วิธีการได้มา
+                activity_name=clean_data(row[2]),      # Col 2: กิจกรรมประมวลผล  ⚠️ ชื่อ field ควรเปลี่ยนเป็น activity_name
+                purpose=clean_data(row[3]),           # Col 3: วัตถุประสงค์
+                collected_personal_data=clean_data(row[4]),                 # Col 4: ข้อมูลส่วนบุคคลที่จัดเก็บ
+                data_subject=clean_data(row[5]), # Col 5: หมวดหมู่ข้อมูล
+                data_type=clean_data(row[6]),   # Col 6: ประเภทข้อมูล
+                collection_format=clean_data(row[7]),               # Col 7: วิธีการได้มา
 
                 # ── Section 3: แหล่งที่มา & ฐานกฎหมาย ──
-                collection_format=clean_data(row[8]),       # Col 8: จากเจ้าของโดยตรง (ü)  ← is_direct
-                is_direct_from_controller=is_direct_value,  # Col 8: ü → true
+                is_direct_value=clean_data(row[8]),       # Col 8: จากเจ้าของโดยตรง (ü)  ← is_direct
+                is_direct_from_subject=is_direct_value,  # Col 8: ü → true
                 indirect_source_detail=clean_data(row[9]),  # Col 9: จากแหล่งอื่น
                 legal_basis=clean_data(row[10]),            # Col 10: ✅ แก้จาก 11
 
@@ -333,4 +333,3 @@ async def delete_ropa_record(record_id: int, db: db_dependency):
     db.delete(record)
     db.commit()
     return {"detail": f"Record ID:{record_id} deleted successfully"}
-

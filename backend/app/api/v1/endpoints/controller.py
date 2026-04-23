@@ -88,7 +88,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 activity_name=clean_data(row[3]),           # Col 3: วัตถุประสงค์
                 purpose=clean_data(row[4]),                 # Col 4: ข้อมูลส่วนบุคคลที่จัดเก็บ
                 collected_personal_data=clean_data(row[5]), # Col 5: หมวดหมู่ข้อมูล
-                data_subject_category=clean_data(row[6]),   # Col 6: ประเภทข้อมูล
+                data_subject=clean_data(row[6]),   # Col 6: ประเภทข้อมูล
                 data_type=clean_data(row[7]),               # Col 7: วิธีการได้มา
 
                 # ── Section 3: แหล่งที่มา & ฐานกฎหมาย ──

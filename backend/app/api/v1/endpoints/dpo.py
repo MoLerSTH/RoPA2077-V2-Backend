@@ -5,8 +5,8 @@ from sqlalchemy import select
 from app.models.ropa import RopaRecord
 from starlette import status
 
-from backend.app.api.v1.endpoints.auth import get_current_user
-from backend.app.schemas.users import UserResponse
+from app.api.v1.endpoints.auth import get_current_user
+from app.schemas.users import UserResponse
 
 router = APIRouter()
 

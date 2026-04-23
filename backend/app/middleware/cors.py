@@ -1,7 +1,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000","http://localhost:9000").split(",")
 
 def add_cors_middleware(app):
     app.add_middleware(

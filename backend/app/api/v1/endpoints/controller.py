@@ -23,112 +23,116 @@ def clean_data(val):
 
 @router.post("/import-ropa-file")
 async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
-    # 1. เช็คนามสกุลไฟล์ที่อนุญาต
     if not file.filename.endswith(('.csv', '.xlsx', '.xls')):
         raise HTTPException(status_code=400, detail="กรุณาอัปโหลดไฟล์นามสกุล .csv, .xlsx หรือ .xls เท่านั้น")
 
     try:
         contents = await file.read()
-        
-        # 2. อ่านไฟล์ตามประเภทนามสกุล ให้กลายเป็น DataFrame (df)
+
         if file.filename.endswith(('.xlsx', '.xls')):
             df = pd.read_excel(io.BytesIO(contents), header=None)
         else:
             df = pd.read_csv(io.BytesIO(contents), header=None)
-            
-        # Helper ฟังก์ชันทำความสะอาดข้อมูล (กันค่า Null หรือ NaN จาก Pandas)
+
         def clean_data(val):
             if pd.isna(val):
                 return ""
             return str(val).strip()
-        
-        # 3. ดึงข้อมูลส่วน Metadata ด้านบน (ผู้ลงบันทึก)
-        # ปรับ Index ให้ตรงกับไฟล์ใหม่: ชื่อ(Index 2), ที่อยู่(Index 3), Email(Index 4), เบอร์(Index 5)
-        recorder_name = clean_data(df.iloc[2, 2]) if len(df) > 2 else ""
-        recorder_addr = clean_data(df.iloc[3, 2]) if len(df) > 3 else ""
-        recorder_email = clean_data(df.iloc[4, 2]) if len(df) > 4 else ""
-        recorder_phone = clean_data(df.iloc[5, 2]) if len(df) > 5 else ""
 
-        # 4. ตัดเอาเฉพาะส่วนที่เป็นตารางข้อมูล (เริ่มที่ Row 15 / Index 14)
+        # ── Metadata: label อยู่ col 1, ค่าที่ผู้ใช้กรอกอยู่ col 2 ──
+        # (ถ้า col 2 ว่าง ให้ fallback ไป col 3)
+        def get_meta(row_idx):
+            val = clean_data(df.iloc[row_idx, 2])
+            if not val:
+                val = clean_data(df.iloc[row_idx, 3])
+            return val
+
+        recorder_name  = get_meta(2)   # ชื่อ
+        recorder_addr  = get_meta(3)   # ที่อยู่
+        recorder_email = get_meta(4)   # Email
+        recorder_phone = get_meta(5)   # เบอร์โทร
+
+        # ── Table data เริ่มที่ index 14 (row 15 ใน Excel) ──
         table_data = df.iloc[14:].copy()
-        
+
         records_to_insert = []
-        
-        # 5. วนลูปและ Map ข้อมูลแต่ละคอลัมน์เข้า Model
+
         for idx, row in table_data.iterrows():
-            # เช็คว่าแถวนี้ไม่มีชื่อกิจกรรมประมวลผล (Col 3) ให้ข้ามไปเลย ถือเป็นบรรทัดว่าง
-            if pd.isna(row[3]) or str(row[3]).strip() == "":
+            # Col 2 คือ "กิจกรรมประมวลผล" — ใช้เป็นตัวเช็คแถวว่าง
+            if pd.isna(row[2]) or str(row[2]).strip() == "":
                 continue
-            
-            # จัดการเงื่อนไข Tick box (ü) ใน Excel/CSV ให้เป็น string 'true'
-            raw_direct_controller = clean_data(row[9])
-            is_direct_value = 'true' if raw_direct_controller == 'ü' else raw_direct_controller
-                
+
+            raw_direct = clean_data(row[8])
+            is_direct_value = 'true' if raw_direct == 'ü' else raw_direct
+
             new_record = RopaRecord(
-                # --- Metadata & Default Fields ---
-                record_type="Controller",
+                # ── Metadata & Default ──
+                record_type="Controller",          # ✅ แก้จาก Processor
                 request_type="สร้างรายการใหม่",
                 status="Pending",
-                
-                # --- ข้อมูลผู้ลงบันทึก ---
+
+                # ── ผู้ลงบันทึก ──
                 created_by=recorder_name,
                 recorder_address=recorder_addr,
                 recorder_email=recorder_email,
                 recorder_phone=recorder_phone,
                 created_at=datetime.now(ZoneInfo("Asia/Bangkok")),
-                updated_by = recorder_name,
-                updated_at = datetime.now(ZoneInfo("Asia/Bangkok")),
+                updated_by=recorder_name,
+                updated_at=datetime.now(ZoneInfo("Asia/Bangkok")),
 
-                # --- Section 1: ข้อมูลผู้ควบคุม/ผู้ประมวลผล ---
-                processor_name=clean_data(row[1]),        # Col 1: 1. ชื่อผู้ประมวลผลข้อมูลส่วนบุคคล
-                controller_address=clean_data(row[2]),    # Col 2: 2. ที่อยู่ผู้ควบคุมข้อมูลส่วนบุคคล
-                
-                # --- Section 2: รายละเอียดกิจกรรมประมวลผล ---
-                activity_name=clean_data(row[3]),         # Col 3: 3. กิจกรรมประมวลผล
-                purpose=clean_data(row[4]),               # Col 4: 4. วัตถุประสงค์
-                collected_personal_data=clean_data(row[5]),# Col 5: 5. ข้อมูลส่วนบุคคลที่จัดเก็บ
-                data_subject=clean_data(row[6]), # Col 6: 6. หมวดหมู่ของข้อมูล
-                data_type=clean_data(row[7]),             # Col 7: 7. ประเภทของข้อมูล
-                collection_format=clean_data(row[8]),     # Col 8: 8. วิธีการได้มาซึ่งข้อมูล
-                
-                # --- Section 3: แหล่งที่มา และ ฐานกฎหมาย ---
-                is_direct_from_controller=is_direct_value,  # Col 9: 9. แหล่งที่ได้มา (จากเจ้าของโดยตรง)
-                indirect_source_detail=clean_data(row[10]), # Col 10: 9. แหล่งที่ได้มา (จากแหล่งอื่น)
-                legal_basis=clean_data(row[11]),            # Col 11: 10. ฐานในการประมวลผล
-                
-                # --- Section 4: การส่งข้อมูลต่างประเทศ ---
-                cb_is_transferred=clean_data(row[12]),       # Col 12: 11. ส่งข้อมูลไปต่างประเทศหรือไม่
-                cb_is_intra_group=clean_data(row[13]),       # Col 13: บริษัทในเครือหรือไม่
-                cb_transfer_method=clean_data(row[14]),      # Col 14: วิธีการโอนข้อมูล
-                cb_destination_standard=clean_data(row[15]), # Col 15: มาตรฐานประเทศปลายทาง
-                cb_section_28_exception=clean_data(row[16]), # Col 16: ข้อยกเว้นตามมาตรา 28 (แก้ไขจาก disclosure_without_consent)
-                
-                # --- Section 5: นโยบายการเก็บรักษาข้อมูล ---
-                rp_storage_format=clean_data(row[17]),       # Col 17: 12. ประเภทของข้อมูลที่จัดเก็บ (Soft/Hard)
-                rp_storage_method=clean_data(row[18]),       # Col 18: วิธีการเก็บรักษาข้อมูล
-                rp_retention_period=clean_data(row[19]),     # Col 19: ระยะเวลาการเก็บรักษา
-                rp_access_rights=clean_data(row[20]),        # Col 20: สิทธิและวิธีการเข้าถึง
-                rp_destruction_method=clean_data(row[21]),   # Col 21: วิธีการลบหรือทำลาย
-                
-                # --- Section 6: มาตรการความมั่นคงปลอดภัย ---
-                sec_organizational=clean_data(row[22]),      # Col 22: 13. มาตรการเชิงองค์กร
-                sec_technical=clean_data(row[23]),           # Col 23: มาตรการเชิงเทคนิค
-                sec_physical=clean_data(row[24]),            # Col 24: มาตรการทางกายภาพ
-                sec_access_control=clean_data(row[25]),      # Col 25: การควบคุมการเข้าถึง
-                sec_user_responsibility=clean_data(row[26]), # Col 26: การกำหนดหน้าที่ความรับผิดชอบ
-                sec_audit_trail=clean_data(row[27])          # Col 27: มาตรการตรวจสอบย้อนหลัง
+                # ── Section 1: ข้อมูลผู้ควบคุม ──
+                processor_name=clean_data(row[1]),          # Col 1: ชื่อผู้ควบคุม
+
+                # ── Section 2: รายละเอียดกิจกรรม ──
+                controller_address=clean_data(row[2]),      # Col 2: กิจกรรมประมวลผล  ⚠️ ชื่อ field ควรเปลี่ยนเป็น activity_name
+                activity_name=clean_data(row[3]),           # Col 3: วัตถุประสงค์
+                purpose=clean_data(row[4]),                 # Col 4: ข้อมูลส่วนบุคคลที่จัดเก็บ
+                collected_personal_data=clean_data(row[5]), # Col 5: หมวดหมู่ข้อมูล
+                data_subject_category=clean_data(row[6]),   # Col 6: ประเภทข้อมูล
+                data_type=clean_data(row[7]),               # Col 7: วิธีการได้มา
+
+                # ── Section 3: แหล่งที่มา & ฐานกฎหมาย ──
+                collection_format=clean_data(row[8]),       # Col 8: จากเจ้าของโดยตรง (ü)  ← is_direct
+                is_direct_from_controller=is_direct_value,  # Col 8: ü → true
+                indirect_source_detail=clean_data(row[9]),  # Col 9: จากแหล่งอื่น
+                legal_basis=clean_data(row[10]),            # Col 10: ✅ แก้จาก 11
+
+                # ── Section 4: Cross-border transfer ──
+                cb_is_transferred=clean_data(row[13]),      # Col 13: ✅ แก้จาก 12
+                cb_is_intra_group=clean_data(row[14]),      # Col 14: ✅ แก้จาก 13
+                cb_transfer_method=clean_data(row[15]),     # Col 15: ✅ แก้จาก 14
+                cb_destination_standard=clean_data(row[16]),# Col 16: ✅ แก้จาก 15
+                cb_section_28_exception=clean_data(row[17]),# Col 17: ✅ แก้จาก 16
+
+                # ── Section 5: การเก็บรักษาข้อมูล ──
+                rp_storage_format=clean_data(row[18]),      # Col 18: ✅ แก้จาก 17
+                rp_storage_method=clean_data(row[19]),      # Col 19: ✅ แก้จาก 18
+                rp_retention_period=clean_data(row[20]),    # Col 20: ✅ แก้จาก 19
+                rp_access_rights=clean_data(row[21]),       # Col 21: ✅ แก้จาก 20
+                rp_destruction_method=clean_data(row[22]),  # Col 22: ✅ แก้จาก 21
+
+                # ── Section 6: มาตรการความมั่นคง ──
+                sec_organizational=clean_data(row[25]),     # Col 25: ✅ แก้จาก 22
+                sec_technical=clean_data(row[26]),          # Col 26: ✅ แก้จาก 23
+                sec_physical=clean_data(row[27]),           # Col 27: ✅ แก้จาก 24
+                sec_access_control=clean_data(row[28]),     # Col 28: ✅ แก้จาก 25
+                sec_user_responsibility=clean_data(row[29]),# Col 29: ✅ แก้จาก 26
+                sec_audit_trail=clean_data(row[30])         # Col 30: ✅ แก้จาก 27
             )
             records_to_insert.append(new_record)
 
-        # 6. บันทึกลง Database
         if records_to_insert:
             db.bulk_save_objects(records_to_insert)
             db.commit()
 
         return {
-            "status": "success", 
+            "status": "success",
             "message": f"ผู้ลงบันทึก: {recorder_name} นำเข้าข้อมูล ROPA สำเร็จจำนวน {len(records_to_insert)} รายการ"
         }
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาดในการประมวลผลไฟล์: {str(e)}")
 
     except Exception as e:
         db.rollback()

@@ -97,7 +97,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
 
                 # ── Section 4: Cross-border transfer ──
                 minor_under_10=clean_data(row[11]),      # Col 13: ✅ แก้จาก 12
-                cb_is_intra_group=clean_data(row[12]),      # Col 14: ✅ แก้จาก 13
+                minor_10_to_20=clean_data(row[12]),      # Col 14: ✅ แก้จาก 13
                 cb_is_transferred=clean_data(row[13]),     # Col 15: ✅ แก้จาก 14
                 cb_is_intra_group=clean_data(row[14]),# Col 16: ✅ แก้จาก 15
                 cb_transfer_method=clean_data(row[15]),# Col 17: ✅ แก้จาก 16

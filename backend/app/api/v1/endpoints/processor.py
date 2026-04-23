@@ -60,9 +60,6 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
         # 5. วนลูปและ Map ข้อมูลแต่ละคอลัมน์เข้า Model
         for idx, row in table_data.iterrows():
             # เช็คว่าแถวนี้ไม่มีชื่อกิจกรรมประมวลผล (Col 3) ให้ข้ามไปเลย ถือเป็นบรรทัดว่าง
-            if pd.isna(row[3]) or str(row[3]).strip() == "":
-                continue
-            
             # จัดการเงื่อนไข Tick box (ü) ใน Excel/CSV ให้เป็น string 'true'
             raw_direct_controller = clean_data(row[9])
             is_direct_value = 'true' if raw_direct_controller == 'ü' else raw_direct_controller

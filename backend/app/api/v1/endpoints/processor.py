@@ -165,8 +165,10 @@ async def create_ropa_record(ropa: RopaCreate, db: db_dependency ,user: UserResp
         cb_is_intra_group = ropa.cb_is_intra_group,
         cb_transfer_method = ropa.cb_transfer_method,
         cb_destination_standard = ropa.cb_destination_standard,
-
+        cb_section_28_exception = ropa.cb_section_28_exception,
+        
         # Retention Policy
+        rp_storage_format = ropa.rp_storage_format,
         rp_storage_method = ropa.rp_storage_method,
         rp_retention_period = ropa.rp_retention_period,
         rp_access_rights = ropa.rp_access_rights,

@@ -26,27 +26,24 @@ def clean_data(val):
     
 @router.post("/import-ropa-file")
 async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
-    # 1. เช็คนามสกุลไฟล์ที่อนุญาต
     if not file.filename.endswith(('.csv', '.xlsx', '.xls')):
         raise HTTPException(status_code=400, detail="กรุณาอัปโหลดไฟล์นามสกุล .csv, .xlsx หรือ .xls เท่านั้น")
 
     try:
         contents = await file.read()
         
-        # 2. อ่านไฟล์ตามประเภทนามสกุล ให้กลายเป็น DataFrame (df)
         if file.filename.endswith(('.xlsx', '.xls')):
             df = pd.read_excel(io.BytesIO(contents), header=None)
         else:
             df = pd.read_csv(io.BytesIO(contents), header=None)
             
-        # Helper ฟังก์ชันทำความสะอาดข้อมูล (กันค่า Null หรือ NaN จาก Pandas)
+        # Cleaning Data (ค่า Null หรือ NaN จาก Pandas)
         def clean_data(val):
             if pd.isna(val):
                 return ""
             return str(val).strip()
         
         # 3. ดึงข้อมูลส่วน Metadata ด้านบน (ผู้ลงบันทึก)
-        # ปรับ Index ให้ตรงกับไฟล์ใหม่: ชื่อ(Index 2), ที่อยู่(Index 3), Email(Index 4), เบอร์(Index 5)
         recorder_name = clean_data(df.iloc[2, 2]) if len(df) > 2 else ""
         recorder_addr = clean_data(df.iloc[3, 2]) if len(df) > 3 else ""
         recorder_email = clean_data(df.iloc[4, 2]) if len(df) > 4 else ""
@@ -59,7 +56,6 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
         
         # 5. วนลูปและ Map ข้อมูลแต่ละคอลัมน์เข้า Model
         for idx, row in table_data.iterrows():
-            # เช็คว่าแถวนี้ไม่มีชื่อกิจกรรมประมวลผล (Col 3) ให้ข้ามไปเลย ถือเป็นบรรทัดว่าง
             # จัดการเงื่อนไข Tick box (ü) ใน Excel/CSV ให้เป็น string 'true'
             raw_direct_controller = clean_data(row[9])
             is_direct_value = 'true' if raw_direct_controller == 'ü' else raw_direct_controller

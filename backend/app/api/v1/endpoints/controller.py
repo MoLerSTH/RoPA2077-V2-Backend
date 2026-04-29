@@ -65,7 +65,7 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
 
             new_record = RopaRecord(
                 # ── Metadata & Default ──
-                record_type="Controller",          # ✅ แก้จาก Processor
+                record_type="Controller",        
                 request_type="สร้างรายการใหม่",
                 status="Pending",
 
@@ -79,46 +79,46 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 updated_at=datetime.now(ZoneInfo("Asia/Bangkok")),
 
                 # ── Section 1: ข้อมูลผู้ควบคุม ──
-                controller_info=clean_data(row[1]),          # Col 1: ชื่อผู้ควบคุม
+                controller_info=clean_data(row[1]),          
 
                 # ── Section 2: รายละเอียดกิจกรรม ──
-                activity_name=clean_data(row[2]),      # Col 2: กิจกรรมประมวลผล  ⚠️ ชื่อ field ควรเปลี่ยนเป็น activity_name
-                purpose=clean_data(row[3]),           # Col 3: วัตถุประสงค์
-                collected_personal_data=clean_data(row[4]),                 # Col 4: ข้อมูลส่วนบุคคลที่จัดเก็บ
-                data_subject=clean_data(row[5]), # Col 5: หมวดหมู่ข้อมูล
-                data_type=clean_data(row[6]),   # Col 6: ประเภทข้อมูล
-                collection_format=clean_data(row[7]),               # Col 7: วิธีการได้มา
+                activity_name=clean_data(row[2]),     
+                purpose=clean_data(row[3]),           
+                collected_personal_data=clean_data(row[4]),                 
+                data_subject=clean_data(row[5]), 
+                data_type=clean_data(row[6]),  
+                collection_format=clean_data(row[7]),             
 
                 # ── Section 3: แหล่งที่มา & ฐานกฎหมาย ──
-                is_direct_from_subject=is_direct_value,       # Col 8: จากเจ้าของโดยตรง (ü)  ← is_direct
-                                                              # Col 8: ü → true
-                indirect_source_detail=clean_data(row[9]),  # Col 9: จากแหล่งอื่น
-                legal_basis=clean_data(row[10]),            # Col 10: ✅ แก้จาก 11
+                is_direct_from_subject=is_direct_value,      
+                                                             
+                indirect_source_detail=clean_data(row[9]), 
+                legal_basis=clean_data(row[10]),            
 
                 # ── Section 4: Cross-border transfer ──
-                minor_under_10=clean_data(row[11]),      # Col 13: ✅ แก้จาก 12
-                minor_10_to_20=clean_data(row[12]),      # Col 14: ✅ แก้จาก 13
-                cb_is_transferred=clean_data(row[13]),     # Col 15: ✅ แก้จาก 14
-                cb_is_intra_group=clean_data(row[14]),# Col 16: ✅ แก้จาก 15
-                cb_transfer_method=clean_data(row[15]),# Col 17: ✅ แก้จาก 16
+                minor_under_10=clean_data(row[11]),    
+                minor_10_to_20=clean_data(row[12]),    
+                cb_is_transferred=clean_data(row[13]),     
+                cb_is_intra_group=clean_data(row[14]),
+                cb_transfer_method=clean_data(row[15]),
 
                 # ── Section 5: การเก็บรักษาข้อมูล ──
-                cb_destination_standard=clean_data(row[16]),      # Col 18: ✅ แก้จาก 17
-                cb_section_28_exception=clean_data(row[17]),      # Col 19: ✅ แก้จาก 18
-                rp_storage_format=clean_data(row[18]),    # Col 20: ✅ แก้จาก 19
-                rp_storage_method=clean_data(row[19]),       # Col 21: ✅ แก้จาก 20
-                rp_retention_period=clean_data(row[20]),  # Col 22: ✅ แก้จาก 21
+                cb_destination_standard=clean_data(row[16]),     
+                cb_section_28_exception=clean_data(row[17]),     
+                rp_storage_format=clean_data(row[18]),   
+                rp_storage_method=clean_data(row[19]),       
+                rp_retention_period=clean_data(row[20]),  
 
                 # ── Section 6: มาตรการความมั่นคง ──
-                rp_access_rights=clean_data(row[21]),     # Col 25: ✅ แก้จาก 22
-                rp_destruction_method=clean_data(row[22]),          # Col 26: ✅ แก้จาก 23
-                disclosure_without_consent=clean_data(row[23]),           # Col 27: ✅ แก้จาก 24
-                dsar_rejection_record=clean_data(row[24]),     # Col 28: ✅ แก้จาก 25
-                sec_organizational=clean_data(row[25]),# Col 29: ✅ แก้จาก 26
-                sec_technical=clean_data(row[26]),         # Col 30: ✅ แก้จาก 27
-                sec_physical = clean_data(row[27]),            # มาตรการทางกายภาพ
-                sec_access_control = clean_data(row[28]),      # การควบคุมการเข้าถึงข้อมูล
-                sec_user_responsibility = clean_data(row[29]), # การกำหนดหน้าที่ผู้ใช้งาน
+                rp_access_rights=clean_data(row[21]),   
+                rp_destruction_method=clean_data(row[22]),          
+                disclosure_without_consent=clean_data(row[23]),         
+                dsar_rejection_record=clean_data(row[24]),   
+                sec_organizational=clean_data(row[25]),
+                sec_technical=clean_data(row[26]),         
+                sec_physical = clean_data(row[27]),         
+                sec_access_control = clean_data(row[28]),   
+                sec_user_responsibility = clean_data(row[29]), 
                 sec_audit_trail =clean_data(row[30]),
             )
             records_to_insert.append(new_record)

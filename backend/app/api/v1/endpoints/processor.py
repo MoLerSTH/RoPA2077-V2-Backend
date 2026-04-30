@@ -71,9 +71,9 @@ async def import_ropa_file(db: db_dependency, file: UploadFile = File(...)):
                 recorder_address=recorder_addr,
                 recorder_email=recorder_email,
                 recorder_phone=recorder_phone,
-                created_at=datetime.now(ZoneInfo("Asia/Bangkok")),
+                created_at=datetime.now(ZoneInfo("Asia/Bangkok")).strftime("%Y-%m-%d %H:%M:%S"),
                 updated_by = recorder_name,
-                updated_at = datetime.now(ZoneInfo("Asia/Bangkok")),
+                updated_at = datetime.now(ZoneInfo("Asia/Bangkok")).strftime("%Y-%m-%d %H:%M:%S"),
 
                 # --- Section 1: ข้อมูลผู้ควบคุม/ผู้ประมวลผล ---
                 processor_name=clean_data(row[1]),        # Col 1: 1. ชื่อผู้ประมวลผลข้อมูลส่วนบุคคล
@@ -186,9 +186,9 @@ async def create_ropa_record(ropa: RopaCreate, db: db_dependency ,user: UserResp
 
         # Audit Fields and Admin Fields
         created_by = user.username,
-        created_at = datetime.now(ZoneInfo("Asia/Bangkok")),
+        created_at = datetime.now(ZoneInfo("Asia/Bangkok")).strftime("%Y-%m-%d %H:%M:%S"),
         updated_by = user.username,
-        updated_at = datetime.now(ZoneInfo("Asia/Bangkok")),
+        updated_at = datetime.now(ZoneInfo("Asia/Bangkok")).strftime("%Y-%m-%d %H:%M:%S"),
         approved_by = None,
         rejection_reason = None
     )
@@ -251,7 +251,7 @@ async def update_ropa_record(record_id: int, ropa: RopaCreate, db: db_dependency
     record.sec_user_responsibility = ropa.sec_user_responsibility
     record.sec_audit_trail = ropa.sec_audit_trail
     record.updated_by = user.username
-    record.updated_at = datetime.now(ZoneInfo("Asia/Bangkok")),
+    record.updated_at = datetime.now(ZoneInfo("Asia/Bangkok")).strftime("%Y-%m-%d %H:%M:%S"),
     record.approved_by = None
     record.rejection_reason = None
 

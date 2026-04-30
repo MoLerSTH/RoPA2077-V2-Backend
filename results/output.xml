@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.13.13 on linux)" generated="2026-04-25T21:31:13.822470" rpa="false" schemaversion="5">
+<suite id="s1" name="Tests" source="/tests">
+<suite id="s1-s1" name="Backend" source="/tests/backend">
+<suite id="s1-s1-s1" name="Tests" source="/tests/backend/tests">
+<suite id="s1-s1-s1-s1" name="Api Tests" source="/tests/backend/tests/api_tests.robot">
+<test id="s1-s1-s1-s1-t1" name="Verify User Login Successfully" line="18">
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:13.972432" level="INFO">Creating Session using : alias=api_session, url=http://app:8000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>api_session</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2026-04-25T21:31:13.972218" elapsed="0.000397"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:13.973258" level="INFO">${payload} = {'email': 'hattakorn49@gmail.com', 'password': 'gusto1234'}</msg>
+<var>${payload}</var>
+<arg>email=hattakorn49@gmail.com</arg>
+<arg>password=gusto1234</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:13.972810" elapsed="0.000477"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:14.142574" level="INFO">POST Request : url=http://app:8000/api/v1/auth/login 
+ path_url=/api/v1/auth/login 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '59', 'Content-Type': 'application/json'} 
+ body=b'{"email": "hattakorn49@gmail.com", "password": "gusto1234"}' 
+ </msg>
+<msg time="2026-04-25T21:31:14.142693" level="INFO">POST Response : url=http://app:8000/api/v1/auth/login 
+ status=201, reason=Created 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:13 GMT', 'server': 'uvicorn', 'content-length': '354', 'content-type': 'application/json', 'x-process-time': '0.16357946395874023'} 
+ body={"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzIjoiVGhhbW1hc2F0IFVuaXZlcnNpdHkiLCJ1c2VyX2lkIjoxLCJleHAiOjE3NzcxNTM1NzQsImRlcGFydG1lbnQiOiJJVCJ9.N5-bs1G0hEhj-YAF5WYH2yN3Eev7oECziXnBC2SPU3A","token_type":"bearer"} 
+ </msg>
+<msg time="2026-04-25T21:31:14.142877" level="INFO">${response} = &lt;Response [201]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/auth/login</arg>
+<arg>json=${payload}</arg>
+<arg>expected_status=201</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:13.973384" elapsed="0.169536"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>201</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.143071" elapsed="0.000527"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nLogin Response: ${response.json()}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.143729" elapsed="0.001120"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-04-25T21:31:14.145693" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzIjoiVGhhbW1hc2F0IFVuaXZlcnN...</msg>
+<var>${TOKEN}</var>
+<arg>${response.json()['access_token']}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.144976" elapsed="0.000776"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-04-25T21:31:14.146615" level="INFO">${GLOBAL_TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzIjoiVGhhbW1hc2F0IFVuaXZlcnN...</msg>
+<arg>${GLOBAL_TOKEN}</arg>
+<arg>${TOKEN}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.145899" elapsed="0.000755"/>
+</kw>
+<doc>ทดสอบการเข้าสู่ระบบเพื่อรับ Token</doc>
+<tag>auth</tag>
+<status status="PASS" start="2026-04-25T21:31:13.970666" elapsed="0.176079"/>
+</test>
+<test id="s1-s1-s1-s1-t2" name="Verify Create New User" line="33">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:14.148315" level="INFO">${payload} = {'username': 'Robot Tester2', 'email': 'robot2@test.com', 'password': '12345', 'role': 'Data Owner', 'department': 'IT', 'address': 'Thammasat', 'phone_number': '0747543589'}</msg>
+<var>${payload}</var>
+<arg>username=Robot Tester2</arg>
+<arg>email=robot2@test.com</arg>
+<arg>password=12345</arg>
+<arg>role=Data Owner</arg>
+<arg>department=IT</arg>
+<arg>address=Thammasat</arg>
+<arg>phone_number=0747543589</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.147889" elapsed="0.000448"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:14.148625" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.148425" elapsed="0.000217"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:14.420584" level="INFO">POST Request : url=http://app:8000/api/v1/users/create 
+ path_url=/api/v1/users/create 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '174'} 
+ body=b'{"username": "Robot Tester2", "email": "robot2@test.com", "password": "12345", "role": "Data Owner", "department": "IT", "address": "Thammasat", "phone_number": "0747543589"}' 
+ </msg>
+<msg time="2026-04-25T21:31:14.420840" level="INFO">POST Response : url=http://app:8000/api/v1/users/create 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:13 GMT', 'server': 'uvicorn', 'content-length': '261', 'content-type': 'application/json', 'x-process-time': '0.26856541633605957'} 
+ body={"username":"Robot Tester2","password":"$argon2id$v=19$m=65536,t=3,p=4$DZNKa8K0r9kM7BaP/b40Nw$8QvvQZJ09axsUzOG/+QtiR0qp4E3SJESphAmeyXi+xo","email":"robot2@test.com","phone_number":"0747543589","address":"Thammasat","department":"IT","role":"Data Owner","id":18} 
+ </msg>
+<msg time="2026-04-25T21:31:14.421037" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/users/create</arg>
+<arg>json=${payload}</arg>
+<arg>headers=${headers}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.148718" elapsed="0.272342"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.421345" elapsed="0.000418"/>
+</kw>
+<doc>ทดสอบการสร้างบัญชีผู้ใช้งานใหม่</doc>
+<tag>users</tag>
+<status status="PASS" start="2026-04-25T21:31:14.147015" elapsed="0.274932"/>
+</test>
+<test id="s1-s1-s1-s1-t3" name="Verify Get All Users" line="41">
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:14.500541" level="INFO">GET Request : url=http://app:8000/api/v1/users 
+ path_url=/api/v1/users 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:14.501302" level="INFO">GET Response : url=http://app:8000/api/v1/users 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:13 GMT', 'server': 'uvicorn', 'content-length': '3384', 'content-type': 'application/json', 'x-process-time': '0.07460141181945801'} 
+ body={"users":[{"email":"hr_owner@fantasize.com","username":"hr_manager_fantasize","department":"Human Resources","role":"data_owner","password":"$argon2id$v=19$m=65536,t=3,p=4$57AQHK/I+iKwnTkk77VeXw$EZIo6/jQhbQERxFniWtbMaq0ShxvibSPAzWiynTfzzY","id":6,"phone_number":"091-234-5678","address":"Thammasat University (Rangsit Campus)"},{"email":"dpo@fantasize.com","username":"dpo_compliance","department":"Legal &amp; Compliance","role":"dpo","password":"$argon2id$v=19$m=65536,t=3,p=4$fSLZh/7nTqJuzS3EgH5viQ$/6RxlKq3UjgK6QKtyMWP6o+zKG/264oay92tiBGen0U","id":7,"phone_number":"082-345-6789","address":"Thammasat University (Rangsit Campus)"},{"email":"audit_check@fantasize.com","username":"internal_auditor","department":"Internal Audit","role":"auditor","password":"$argon2id$v=19$m=65536,t=3,p=4$op3bti7hN+5crJEemoOtog$6pie61k0B8f0de1q3SOe8YNHTH0jGR2GLjXZlpihBXU","id":8,"phone_number":"083-456-7890","address":"Thammasat University (Rangsit Campus)"},{"email":"executive_office@fantasize.com","username":"ceo_fantasize","department":"Management","role":"executive","password":"$argon2id$v=19$m=65536,t=3,p=4$SMEUN4lqk0wa/tAkWRt6+w$A8gT9EKZsyYf+KLmCkvaDqUPeIgFFkqAgd6bhIf9OU0","id":9,"phone_number":"084-567-8901","address":"Thammasat University (Rangsit Campus)"},{"email":"robot@test.com","username":"Robot Tester","department":"IT","role":"Data Owner","password":"$argon2id$v=19$m=65536,t=3,p=4$5d6M/QItnT+4rZP3N7SMKg$b1aB7sf2zLpGldruYD5UYT9aQ2WBcy56B9MPLlvpUNM","id":13,"phone_number":"0747543587","address":"Thammasat"},{"email":"dev@gmail.com","username":"dev1","department":"Development","role":"developer","password":"$argon2id$v=19$m=65536,t=3,p=4$1FPlBJteEqku/jlDBdx+qg$VlMk/1K1QRW7iyEHDAyJbUoBMUlt/dIOEqSCVjf1VxQ","id":10,"phone_number":"xxx-xxx-xxxx","address":"-"},{"email":"robot2@test.com","username":"Robot Tester2","department":"IT","role":"Data Owner","password":"$argon2id$v=19$m=65536,t=3,p=4$DZNKa8K0r9kM7BaP/b40Nw$8QvvQZJ09axsUzOG/+QtiR0qp4E3SJESphAmeyXi+xo","id":18,"phone_number":"0747543589","address":"Thammasat"},{"email":"Wachirawichfilm@gmail.com","username":"Wachirawich Chankeaw","department":"IT","role":"developer","password":"$argon2id$v=19$m=65536,t=3,p=4$wlUfksSfEJ2OX64sRbEslw$jqzn6LUNtbCiWAuLOX6t8h16wBPPhjZ/joxy9Faa2J8","id":2,"phone_number":"0622261643","address":"บ้านฉัน"},{"email":"txtxfranxx@gmail.com","username":"phatpong","department":"IT","role":"developer","password":"$argon2id$v=19$m=65536,t=3,p=4$HRHzjjgCJl67WaeYXGttHw$bGunk9qcy158B9M8NesT4G1NEcDieaygHF+pxulcj2w","id":3,"phone_number":"0956245774","address":"Thammasat University"},{"email":"kanchanasin@gmail.com","username":"kanchanasin","department":"IT","role":"developer","password":"$argon2id$v=19$m=65536,t=3,p=4$zN0nJkC3e2bROMF+UTSkMA$ibuH6KkuFb/BFj+ZHSAuBVBfzqAiqIkIfofL1JfQIzM","id":5,"phone_number":"09800000001","address":"TU home"},{"email":"chokun@gmail.com","username":"chokunlnwDev","department":"IT","role":"developer","password":"$argon2id$v=19$m=65536,t=3,p=4$PbOZSjeL8HBIUGD611Xr0w$q5BcWPXshMCIXI8HH0GWacBhINqnsInZwuFm2+wHUwo","id":4,"phone_number":"09800000000","address":"TU home"},{"email":"hattakorn49@gmail.com","username":"Gusto","department":"IT","role":"developer","password":"$argon2id$v=19$m=65536,t=3,p=4$+7o4G1ginidpuFlKUjUgeQ$MuodXkH3AsNZ7j1a9Hq+MdbjcoLIXTptovblHnaTmdU","id":1,"phone_number":"0830302649","address":"Thammasat University"}]} 
+ </msg>
+<msg time="2026-04-25T21:31:14.501521" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/users</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.423405" elapsed="0.078147"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.501721" elapsed="0.000220"/>
+</kw>
+<doc>ทดสอบการดึงข้อมูลผู้ใช้งานทั้งหมด</doc>
+<tag>users</tag>
+<status status="PASS" start="2026-04-25T21:31:14.422341" elapsed="0.079716"/>
+</test>
+<test id="s1-s1-s1-s1-t4" name="Verify Get User By ID" line="47">
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:14.575602" level="INFO">GET Request : url=http://app:8000/api/v1/users/1 
+ path_url=/api/v1/users/1 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:14.575747" level="INFO">GET Response : url=http://app:8000/api/v1/users/1 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:13 GMT', 'server': 'uvicorn', 'content-length': '268', 'content-type': 'application/json', 'x-process-time': '0.06904387474060059'} 
+ body={"username":"Gusto","password":"$argon2id$v=19$m=65536,t=3,p=4$+7o4G1ginidpuFlKUjUgeQ$MuodXkH3AsNZ7j1a9Hq+MdbjcoLIXTptovblHnaTmdU","email":"hattakorn49@gmail.com","phone_number":"0830302649","address":"Thammasat University","department":"IT","role":"developer","id":1} 
+ </msg>
+<msg time="2026-04-25T21:31:14.575993" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/users/${TEST_USER_ID}</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.503135" elapsed="0.072895"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.576328" elapsed="0.000337"/>
+</kw>
+<doc>ทดสอบการดึงข้อมูลผู้ใช้งานรายบุคคล</doc>
+<tag>users</tag>
+<status status="PASS" start="2026-04-25T21:31:14.502332" elapsed="0.074470"/>
+</test>
+<test id="s1-s1-s1-s1-t5" name="Verify Create RoPA Controller Record" line="56">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:14.578555" level="INFO">${payload} = {'record_type': 'Controller', 'activity_name': 'Automated Data Collection', 'purpose': 'Testing'}</msg>
+<var>${payload}</var>
+<arg>record_type=Controller</arg>
+<arg>activity_name=Automated Data Collection</arg>
+<arg>purpose=Testing</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.578008" elapsed="0.000574"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:14.579047" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzI...</msg>
+<var>${headers}</var>
+<arg>Authorization=Bearer ${GLOBAL_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.578677" elapsed="0.000430"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:14.771098" level="INFO">POST Request : url=http://app:8000/api/v1/ropa/controller/create 
+ path_url=/api/v1/ropa/controller/create 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzIjoiVGhhbW1hc2F0IFVuaXZlcnNpdHkiLCJ1c2VyX2lkIjoxLCJleHAiOjE3NzcxNTM1NzQsImRlcGFydG1lbnQiOiJJVCJ9.N5-bs1G0hEhj-YAF5WYH2yN3Eev7oECziXnBC2SPU3A', 'Content-Type': 'application/json', 'Content-Length': '97'} 
+ body=b'{"record_type": "Controller", "activity_name": "Automated Data Collection", "purpose": "Testing"}' 
+ </msg>
+<msg time="2026-04-25T21:31:14.771647" level="INFO">POST Response : url=http://app:8000/api/v1/ropa/controller/create 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:13 GMT', 'server': 'uvicorn', 'content-length': '1327', 'content-type': 'application/json', 'x-process-time': '0.18854212760925293'} 
+ body={"record_type":"Controller","request_type":"สร้างรายการใหม่","department":"IT","activity_name":"Automated Data Collection","purpose":"Testing","data_subject":null,"collected_personal_data":null,"collected_data":null,"legal_basis":null,"status":"Pending","controller_info":null,"processor_name":null,"controller_address":null,"data_type":null,"collection_format":null,"is_direct_from_subject":null,"is_direct_from_controller":null,"indirect_source_detail":null,"minor_under_10":null,"minor_10_to_20":null,"cb_is_transferred":null,"cb_is_intra_group":null,"cb_transfer_method":null,"cb_destination_standard":null,"cb_section_28_exception":null,"rp_storage_format":null,"rp_storage_method":null,"rp_retention_period":null,"rp_access_rights":null,"rp_destruction_method":null,"disclosure_without_consent":null,"dsar_rejection_record":null,"sec_organizational":null,"sec_technical":null,"sec_physical":null,"sec_access_control":null,"sec_user_responsibility":null,"sec_audit_trail":null,"rejection_reason":null,"recorder_email":"hattakorn49@gmail.com","recorder_phone":"0830302649","recorder_address":"Thammasat University","id":519,"created_at":"2026-04-25T21:31:14.582912Z","created_by":"Gusto","updated_at":"2026-04-25T21:31:14.582914Z","updated_by":"Gusto","approved_by":null,"submitted_date":null} 
+ </msg>
+<msg time="2026-04-25T21:31:14.771801" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/ropa/controller/create</arg>
+<arg>json=${payload}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=200</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.579226" elapsed="0.192650"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.772039" elapsed="0.000180"/>
+</kw>
+<doc>ทดสอบการสร้างรายการ RoPA ฝั่ง Controller</doc>
+<tag>ropa_controller</tag>
+<status status="PASS" start="2026-04-25T21:31:14.577091" elapsed="0.195215"/>
+</test>
+<test id="s1-s1-s1-s1-t6" name="Verify Get All RoPA Controller Records" line="64">
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:15.062597" level="INFO">GET Request : url=http://app:8000/api/v1/ropa/controller/records 
+ path_url=/api/v1/ropa/controller/records 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:15.064221" level="INFO">GET Response : url=http://app:8000/api/v1/ropa/controller/records 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:13 GMT', 'server': 'uvicorn', 'content-length': '750459', 'content-type': 'application/json', 'x-process-time': '0.2840292453765869'} 
+ body={"records":[{"controller_info":"Et atque tempora tem","collected_personal_data":"Cupidatat est nobis","minor_10_to_20":"Adipisicing quo odio","rp_storage_method":"Aspernatur quia et f","sec_access_control":"Consequuntur consect","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"true","rp_retention_period":"Occaecat maiores exe","sec_user_responsibility":"Labore nemo ab deser","recorder_email":"chokun@gmail.com","processor_name":null,"collection_format":"Soft File","cb_is_intra_group":"true","rp_access_rights":"Amet ex aut facilis","sec_audit_trail":"Provident voluptati","recorder_phone":"09800000000","controller_address":null,"is_direct_from_subject":"false","cb_transfer_method":"Minim et sed porro m","rp_destruction_method":"Elit in aut quo ut","created_at":"2026-04-22T21:37:34.769246+00:00","recorder_address":"TU home","activity_name":"Hammett Puckett","is_direct_from_controller":null,"cb_destination_standard":"Quia voluptate vel v","disclosure_without_consent":"Dicta nesciunt nemo","created_by":"chokunlnwDev","id":5,"purpose":"Accusantium ipsum i","indirect_source_detail":"","dsar_rejection_record":"Ratione aperiam quib","sec_organizational":"Saunders Schroeder Traders","updated_at":"2026-04-22T21:38:00.792229+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"Sit fugiat sint nost","legal_basis":"Legal Obligation","cb_section_28_exception":null,"sec_technical":"Asperiores similique","updated_by":"chokunlnwDev","status":"Approved","department":"HR","minor_under_10":"Iusto sunt consequat","rp_storage_format":null,"sec_physical":"Et harum minim ut pr","approved_by":null},{"controller_info":"Tenetur officiis cor","collected_personal_data":"Nihil doloremque quo","minor_10_to_20":"Est excepteur omnis ","rp_storage_method":"Cumque molestiae eos","sec_access_control":"Omnis excepteur porr","rejection_reason":"ไม่ครบดกเกดเ","controller_name":null,"data_type":"ข้อมูลอ่อนไหว","cb_is_transferred":"false","rp_retention_period":"Maiores incididunt u","sec_user_responsibility":"Totam unde laborum ","recorder_email":"chokun@gmail.com","processor_name":null,"collection_format":"Soft File","cb_is_intra_group":"true","rp_access_rights":"Eiusmod ducimus ess","sec_audit_trail":"Architecto deleniti ","recorder_phone":"09800000000","controller_address":null,"is_direct_from_subject":"false","cb_transfer_method":"Quis odio reprehende","rp_destruction_method":"Omnis dolor enim seq","created_at":"2026-04-22T21:35:59.271410+00:00","recorder_address":"TU home","activity_name":"Dane Pruitt","is_direct_from_controller":null,"cb_destination_standard":"Aspernatur qui volup","disclosure_without_consent":"Est animi laboriosa","created_by":"chokunlnwDev","id":4,"purpose":"Qui ut consequatur ","indirect_source_detail":"","dsar_rejection_record":"Id esse excepteur a","sec_organizational":"Jackson Whitley Trading","updated_at":"2026-04-23T01:53:30.881219+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"Commodi quis est dol","legal_basis":"Vital Interest","cb_section_28_exception":null,"sec_technical":"Eum non facere neque","updated_by":"chokunlnwDev","status":"Approved","department":"IT","minor_under_10":"Et odit dolores corr","rp_storage_format":null,"sec_physical":"Enim vero occaecat d","approved_by":"chokunlnwDev"},{"controller_info":"บริษัท แฟนตาไซซ์ จำกัด (FANTASIZE Co., Ltd.)","collected_personal_data":"ชื่อ-นามสกุล, เบอร์โทรศัพท์, อีเมล, ประวัติการศึกษา, ประวัติการทำงาน","minor_10_to_20":"Yes (กรณีฝึกงาน)","rp_storage_method":"Google Cloud Storage / Locked Cabinet","sec_access_control":"Username &amp; Password, 2FA","rejection_reason":"-","controller_name":null,"data_type":"General Personal Data","cb_is_transferred":"No","rp_retention_period":"2 ปี หลังจากสิ้นสุดกระบวนการคัดเลือก","sec_user_responsibility":"พนักงานทุกคนต้องผ่านการอบรม PDPA Awareness","recorder_email":"admin_hr@fantasize.com","processor_name":"Internal HR Team","collection_format":"Digital Form &amp; Paper","cb_is_intra_group":"No","rp_access_rights":"HR Manager, Recruitment Team","sec_audit_trail":"Log เก็บประวัติการเข้าถึงข้อมูลย้อนหลัง 90 วัน","recorder_phone":"02-123-4567","controller_address":"999 ถนนพหลโยธิน คลองหนึ่ง ปทุมธานี","is_direct_from_subject":"Yes","cb_transfer_method":"N/A","rp_destruction_method":"ลบไฟล์ดิจิทัลถาวร และทำลายเอกสารด้วยเครื่องย่อยกระดาษ","created_at":"2026-04-22T20:20:21.028456+00:00","recorder_address":"ฝ่ายบุคคล ชั้น 4 สำนักงานใหญ่","activity_name":"การรับสมัครและคัดเลือกพนักงาน (Recruitment)","is_direct_from_controller":"No","cb_destination_standard":"N/A","disclosure_without_consent":"N/A","created_by":null,"id":1,"purpose":"เพื่อใช้ในการพิจารณาคัดเลือก ตรวจสอบคุณสมบัติ และติดต่อสื่อสารกับผู้สมัครงาน","indirect_source_detail":"N/A","dsar_rejection_record":"None","sec_organizational":"กำหนดสิทธิ์การเข้าถึงข้อมูลตามบทบาท (RBAC)","updated_at":"2026-04-22T21:37:01.207812+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"ผู้สมัครงาน (Applicants)","legal_basis":null,"cb_section_28_exception":null,"sec_technical":"Encryption at rest, SSL/TLS In transit","updated_by":null,"status":"Approved","department":"IT","minor_under_10":"No","rp_storage_format":null,"sec_physical":"ห้องเก็บเอกสารล็อคกุญแจ, กล้องวงจรปิด","approved_by":null},{"controller_info":null,"collected_personal_data":"ชื่อ นามสกกุล ที่อยู่ เบอร์โทร อีเมล ฯลฯ","minor_10_to_20":null,"rp_storage_method":"เข้ารหัส","sec_access_control":"","rejection_reason":"ไม่ถ๕กใจ","controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"ไม่มี","rp_retention_period":"5 ปี","sec_user_responsibility":"","recorder_email":"","processor_name":"บริษัท A","collection_format":"ข้อมูลอิเล็กทรอนิกส์","cb_is_intra_group":"","rp_access_rights":"กำหนดเฉพาะผู้มีสิทธิ / ฝ่าย IT","sec_audit_trail":"","recorder_phone":"","controller_address":null,"is_direct_from_subject":"ü","cb_transfer_method":"","rp_destruction_method":"","created_at":"2026-04-23T05:15:58.973538+00:00","recorder_address":"","activity_name":"การให้บริการผ่านเว็บไซต์","is_direct_from_controller":null,"cb_destination_standard":"","disclosure_without_consent":null,"created_by":"","id":297,"purpose":"เพื่อยืนยันตัวตนในการเข้าใช้บริการ","indirect_source_detail":"","dsar_rejection_record":null,"sec_organizational":"","updated_at":"2026-04-23T06:00:43.706490+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"ข้อมูลลูกค้า / ผู้ใช้บริการ","legal_basis":"ฐานปฏิบัติตามสัญญา (การเข้าใช้บริการ)","cb_section_28_exception":"","sec_technical":"","updated_by":"","status":"Rejected","department":null,"minor_under_10":null,"rp_storage_format":"ข้อมูลอิเล็กทรอนิกส์","sec_physical":"","approved_by":null},{"controller_info":null,"collected_personal_data":"ข้อมูลลูกค้า คู้ค้า","minor_10_to_20":null,"rp_storage_method":"ข้อมูลอิเล็กทรอนิกส์","sec_access_control":"","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลอิเล็กทรอนิกส์","cb_is_transferred":"","rp_retention_period":"เข้ารหัส","sec_user_responsibility":"","recorder_email":"","processor_name":"","collection_format":"ü","cb_is_intra_group":"ไม่มี","rp_access_rights":"5 ปี","sec_audit_trail":"","recorder_phone":"","controller_address":"","is_direct_from_subject":null,"cb_transfer_method":"","rp_destruction_method":"กำหนดเฉพาะผู้มีสิทธิ / ฝ่ายขาย การตลาด ประชาสัมพันธ์","created_at":"2026-04-23T03:57:07.822108+00:00","recorder_address":"","activity_name":"เพื่อประชาสัมพันธ์ข่าวสาร","is_direct_from_controller":"","cb_destination_standard":"","disclosure_without_consent":null,"created_by":"","id":216,"purpose":"ภาพถ่าย ภาพเคลื่อนไหว","indirect_source_detail":"ฐานประโยชน์โดยชอบด้วยกฎหมาย","dsar_rejection_record":null,"sec_organizational":"","updated_at":"2026-04-23T03:57:07.822109+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"ข้อมูลทั่วไป","legal_basis":"","cb_section_28_exception":"","sec_technical":"มีการใช้หรือเปิดเผยข้อมูลไปยังบุคคลผ่านช่องทางสื่อประชาสัมพันธ์","updated_by":"","status":"Pending","department":null,"minor_under_10":null,"rp_storage_format":"","sec_physical":"","approved_by":null},{"controller_info":null,"collected_personal_data":"ข้อมูลลูกค้า คู้ค้า","minor_10_to_20":null,"rp_storage_method":"ข้อมูลอิเล็กทรอนิกส์","sec_access_control":"","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลอิเล็กทรอนิกส์","cb_is_transferred":"ไม่มี","rp_retention_period":"เข้ารหัส","sec_user_responsibility":"","recorder_email":"","processor_name":"","collection_format":"ü","cb_is_intra_group":"ไม่มี","rp_access_rights":"5 ปี","sec_audit_trail":"","recorder_phone":"","controller_address":"","is_direct_from_subject":null,"cb_transfer_method":"","rp_destruction_method":"กำหนดเฉพาะผู้มีสิทธิ / ฝ่ายขาย การตลาด ประชาสัมพันธ์","created_at":"2026-04-23T03:57:07.822295+00:00","recorder_address":"","activity_name":"สัมภาษณ์แบบเจาะจงตัวบุคคล","is_direct_from_controller":"","cb_destination_standard":"","disclosure_without_consent":null,"created_by":"","id":217,"purpose":"ภาพถ่าย ภาพเคลื่อนไหว คลิปสัมภาษณ์","indirect_source_detail":"ความยินยอม","dsar_rejection_record":null,"sec_organizational":"","updated_at":"2026-04-23T03:57:07.822296+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"ข้อมูลทั่วไป","legal_basis":"ไม่มี","cb_section_28_exception":"","sec_technical":"มีการใช้หรือเปิดเผยข้อมูลไปยังบุคคลผ่านช่องทางสื่อประชาสัมพันธ์","updated_by":"","status":"Pending","department":null,"minor_under_10":null,"rp_storage_format":"","sec_physical":"","approved_by":null},{"controller_info":null,"collected_personal_data":"ชื่อ นามสกกุล ที่อยู่ เบอร์โทร อีเมล ฯลฯ","minor_10_to_20":null,"rp_storage_method":"เข้ารหัส","sec_access_control":"","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"ไม่มี","rp_retention_period":"5 ปี","sec_user_responsibility":"","recorder_email":"","processor_name":"บริษัท A","collection_format":"ข้อ... (set the log level to DEBUG or TRACE to see the full content) 
+ </msg>
+<msg time="2026-04-25T21:31:15.065342" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/ropa/controller/records</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:14.773182" elapsed="0.292189"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.065573" elapsed="0.000257"/>
+</kw>
+<doc>ทดสอบการดึงข้อมูลรายการ RoPA Controller ทั้งหมด</doc>
+<tag>ropa_controller</tag>
+<status status="PASS" start="2026-04-25T21:31:14.772513" elapsed="0.293418"/>
+</test>
+<test id="s1-s1-s1-s1-t7" name="Verify Create RoPA Processor Record" line="73">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:15.067602" level="INFO">${payload} = {'record_type': 'Processor', 'activity_name': 'Automated Processing', 'processor_name': 'Robot Corp'}</msg>
+<var>${payload}</var>
+<arg>record_type=Processor</arg>
+<arg>activity_name=Automated Processing</arg>
+<arg>processor_name=Robot Corp</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.067044" elapsed="0.000592"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:15.068083" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzI...</msg>
+<var>${headers}</var>
+<arg>Authorization=Bearer ${GLOBAL_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.067766" elapsed="0.000340"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:15.266621" level="INFO">POST Request : url=http://app:8000/api/v1/ropa/processor/create 
+ path_url=/api/v1/ropa/processor/create 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHdXN0byIsInJvbGUiOiJkZXZlbG9wZXIiLCJlbWFpbCI6ImhhdHRha29ybjQ5QGdtYWlsLmNvbSIsInBob25lX251bWJlciI6IjA4MzAzMDI2NDkiLCJhZGRyZXNzIjoiVGhhbW1hc2F0IFVuaXZlcnNpdHkiLCJ1c2VyX2lkIjoxLCJleHAiOjE3NzcxNTM1NzQsImRlcGFydG1lbnQiOiJJVCJ9.N5-bs1G0hEhj-YAF5WYH2yN3Eev7oECziXnBC2SPU3A', 'Content-Type': 'application/json', 'Content-Length': '101'} 
+ body=b'{"record_type": "Processor", "activity_name": "Automated Processing", "processor_name": "Robot Corp"}' 
+ </msg>
+<msg time="2026-04-25T21:31:15.266717" level="INFO">POST Response : url=http://app:8000/api/v1/ropa/processor/create 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:15 GMT', 'server': 'uvicorn', 'content-length': '1324', 'content-type': 'application/json', 'x-process-time': '0.19554924964904785'} 
+ body={"record_type":"Processor","request_type":"สร้างรายการใหม่","department":"IT","activity_name":"Automated Processing","purpose":null,"data_subject":null,"collected_personal_data":null,"collected_data":null,"legal_basis":null,"status":"Pending","controller_info":null,"processor_name":"Robot Corp","controller_address":null,"data_type":null,"collection_format":null,"is_direct_from_subject":null,"is_direct_from_controller":null,"indirect_source_detail":null,"minor_under_10":null,"minor_10_to_20":null,"cb_is_transferred":null,"cb_is_intra_group":null,"cb_transfer_method":null,"cb_destination_standard":null,"cb_section_28_exception":null,"rp_storage_format":null,"rp_storage_method":null,"rp_retention_period":null,"rp_access_rights":null,"rp_destruction_method":null,"disclosure_without_consent":null,"dsar_rejection_record":null,"sec_organizational":null,"sec_technical":null,"sec_physical":null,"sec_access_control":null,"sec_user_responsibility":null,"sec_audit_trail":null,"rejection_reason":null,"recorder_email":"hattakorn49@gmail.com","recorder_phone":"0830302649","recorder_address":"Thammasat University","id":520,"created_at":"2026-04-25T21:31:15.071062Z","created_by":"Gusto","updated_at":"2026-04-25T21:31:15.071066Z","updated_by":"Gusto","approved_by":null,"submitted_date":null} 
+ </msg>
+<msg time="2026-04-25T21:31:15.266881" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/ropa/processor/create</arg>
+<arg>json=${payload}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=200</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.068209" elapsed="0.198705"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.267151" elapsed="0.000291"/>
+</kw>
+<doc>ทดสอบการสร้างรายการ RoPA ฝั่ง Processor</doc>
+<tag>ropa_processor</tag>
+<status status="PASS" start="2026-04-25T21:31:15.066209" elapsed="0.201384"/>
+</test>
+<test id="s1-s1-s1-s1-t8" name="Verify Get All RoPA Processor Records" line="81">
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:15.490844" level="INFO">GET Request : url=http://app:8000/api/v1/ropa/processor/records 
+ path_url=/api/v1/ropa/processor/records 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:15.491900" level="INFO">GET Response : url=http://app:8000/api/v1/ropa/processor/records 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:15 GMT', 'server': 'uvicorn', 'content-length': '419089', 'content-type': 'application/json', 'x-process-time': '0.21726250648498535'} 
+ body={"records":[{"controller_info":"บริษัท การผลิต จำกัด (ผู้ว่าจ้าง)","collected_personal_data":"ชื่อ-นามสกุล, เลขบัญชีธนาคาร, เงินเดือน, เลขประจำตัวผู้เสียภาษี","minor_10_to_20":"No","rp_storage_method":"On-premise Server with Backup","sec_access_control":"Identity Management System","rejection_reason":"-","controller_name":null,"data_type":"Financial Data","cb_is_transferred":"No","rp_retention_period":"10 ปี ตามที่กฎหมายภาษีอากรและกฎหมายบัญชีกำหนด","sec_user_responsibility":"ห้ามทำซ้ำข้อมูลลงในอุปกรณ์ส่วนตัว (USB/Personal Laptop)","recorder_email":"payroll_service@partneraccount.com","processor_name":"บริษัท บัญชีพันธมิตร จำกัด (เราในฐานะ Processor)","collection_format":"Digital (Excel/CSV via Secure Portal)","cb_is_intra_group":"No","rp_access_rights":"Payroll Specialist, Accountant","sec_audit_trail":"Login History และ Transaction Logs","recorder_phone":"02-YYY-YYYY","controller_address":"456 ถนนรัชดาภิเษก เขตห้วยขวาง กรุงเทพฯ","is_direct_from_subject":"No","cb_transfer_method":"N/A","rp_destruction_method":"Shredding (สำหรับเอกสาร) และ Overwriting (สำหรับข้อมูลดิจิทัล)","created_at":null,"recorder_address":"แผนกบริหารค่าจ้าง","activity_name":"การคำนวณเงินเดือนและภาษี (Payroll Processing)","is_direct_from_controller":"Yes","cb_destination_standard":"N/A","disclosure_without_consent":"ส่งข้อมูลให้ธนาคารและกรมสรรพากรตามหน้าที่ในสัญญา","created_by":null,"id":2,"purpose":"เพื่อคำนวณค่าจ้าง ภาษีหัก ณ ที่จ่าย และสวัสดิการต่างๆ ตามคำสั่งของผู้ว่าจ้าง","indirect_source_detail":"Controller ส่งไฟล์ข้อมูลพนักงานให้รายเดือน","dsar_rejection_record":"None","sec_organizational":"NDA (Non-Disclosure Agreement) กับพนักงานทุกคน","updated_at":null,"request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"พนักงานของบริษัทผู้ว่าจ้าง","legal_basis":"Contract (สัญญาจ้างทำของ/จ้างบริการ)","cb_section_28_exception":null,"sec_technical":"Password Protected Files, Database Encryption","updated_by":null,"status":"Approved","department":"IT","minor_under_10":"No","rp_storage_format":null,"sec_physical":"ตู้เก็บเอกสารทนไฟล็อคสองชั้น","approved_by":null},{"controller_info":"","collected_personal_data":"Velit et aliquid ad","minor_10_to_20":"","rp_storage_method":"Quibusdam accusamus ","sec_access_control":"Accusantium exercita","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"false","rp_retention_period":"Eos blanditiis et ve","sec_user_responsibility":"Corporis illo quod i","recorder_email":"chokun@gmail.com","processor_name":"Freya Farrell","collection_format":"Hard Copy","cb_is_intra_group":"true","rp_access_rights":"Tempor recusandae Q","sec_audit_trail":"Eum accusantium dese","recorder_phone":"09800000000","controller_address":"Dolorem inventore ad","is_direct_from_subject":"true","cb_transfer_method":"Ipsum doloribus cup","rp_destruction_method":"Ut consectetur duci","created_at":"2026-04-22T21:35:34.897839+00:00","recorder_address":"TU home","activity_name":"Darrel Baird","is_direct_from_controller":null,"cb_destination_standard":"Dolor ex irure quia ","disclosure_without_consent":"","created_by":"chokunlnwDev","id":3,"purpose":"Voluptatibus aut cil","indirect_source_detail":"","dsar_rejection_record":"","sec_organizational":"Hanson Marshall Trading","updated_at":"2026-04-22T21:36:33.556945+00:00","request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"Ut repellendus Nost","legal_basis":"Vital Interest","cb_section_28_exception":null,"sec_technical":"Eu rem incidunt at ","updated_by":"chokunlnwDev","status":"Approved","department":"IT","minor_under_10":"","rp_storage_format":null,"sec_physical":"Duis veniam nostrum","approved_by":null},{"controller_info":"","collected_personal_data":"Ipsam alias commodo ","minor_10_to_20":"","rp_storage_method":"Sed commodi odio sin","sec_access_control":"Saepe dolor cillum q","rejection_reason":"dfsdsdfsd","controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"true","rp_retention_period":"Delectus maiores ei","sec_user_responsibility":"Et pariatur Quam od","recorder_email":"chokun@gmail.com","processor_name":"Valentine Slater","collection_format":"Hard Copy","cb_is_intra_group":"false","rp_access_rights":"Perspiciatis odio q","sec_audit_trail":"Voluptatem maiores h","recorder_phone":"09800000000","controller_address":"Numquam qui minus de","is_direct_from_subject":"true","cb_transfer_method":"Quia sed laborum inv","rp_destruction_method":"Sequi fugiat eos l","created_at":"2026-04-22T21:37:50.398702+00:00","recorder_address":"TU home","activity_name":"Riley Valentine","is_direct_from_controller":null,"cb_destination_standard":"Qui non explicabo Q","disclosure_without_consent":"","created_by":"chokunlnwDev","id":6,"purpose":"Amet alias facilis ","indirect_source_detail":"","dsar_rejection_record":"","sec_organizational":"Mills Delgado Traders","updated_at":"2026-04-22T21:39:02.987262+00:00","request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"Proident et iste ex","legal_basis":"Contract","cb_section_28_exception":null,"sec_technical":"Maiores commodi volu","updated_by":"chokunlnwDev","status":"Approved","department":"IT","minor_under_10":"","rp_storage_format":null,"sec_physical":"Deserunt architecto ","approved_by":null},{"controller_info":null,"collected_personal_data":"ข้อมูลผู้รับจ้าง ชื่อ-สกุล, เบอร์โทร, อีเมล","minor_10_to_20":null,"rp_storage_method":"One Drive / ใส่แฟ้ม","sec_access_control":"แชร์ข้อมูลเฉพาะคนที่อยู่ใน Domain บริษัท Netaby และในเครือ","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"ไม่มี","rp_retention_period":"2ปี","sec_user_responsibility":"ผู้เกี่ยวข้องสามารถแจ้งขอดูข้อมูล/ขอดาวโหลดข้อมูลได้","recorder_email":null,"processor_name":"Test Company Limited","collection_format":"software","cb_is_intra_group":"ไม่มี","rp_access_rights":"กำหนดเฉพาะผู้มีสิทธิ์","sec_audit_trail":"Audit","recorder_phone":null,"controller_address":"บริษัทคู่ค้า / ลูกค้า","is_direct_from_subject":null,"cb_transfer_method":"ไม่มี","rp_destruction_method":"เครื่องทำลายเอกสาร/ลบไฟล์ข้อมูล","created_at":"2026-04-22T23:11:58.255737+00:00","recorder_address":null,"activity_name":"ดำเนินการตามสัญญาว่าจ้าง","is_direct_from_controller":"true","cb_destination_standard":"ไม่มี","disclosure_without_consent":"ไม่มี","created_by":null,"id":15,"purpose":"เพื่อจัดจ้าง ออกแบบ/พัฒนาระบบ","indirect_source_detail":null,"dsar_rejection_record":null,"sec_organizational":"จำกัดการเข้าถึงเฉพาะผู้เกี่ยวข้อง","updated_at":null,"request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"คู่ค้า","legal_basis":"ฐานปฎิบัตติตามสัญญา","cb_section_28_exception":null,"sec_technical":"แชร์ข้อมูลเฉพาะคนที่อยู่ใน Domain บริษัท Netaby และในเครือ","updated_by":null,"status":"Pending","department":null,"minor_under_10":null,"rp_storage_format":null,"sec_physical":"ไม่มี","approved_by":null},{"controller_info":null,"collected_personal_data":"ข้อมมูลผู้สมัครอบรม","minor_10_to_20":null,"rp_storage_method":"One Drive / ใส่แฟ้ม","sec_access_control":"แชร์ข้อมูลเฉพาะคนที่อยู่ใน Domain บริษัท Netaby และในเครือ","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"ไม่มี","rp_retention_period":"2ปี","sec_user_responsibility":"ผู้เกี่ยวข้องสามารถแจ้งขอดูข้อมูล/ขอดาวโหลดข้อมูลได้","recorder_email":null,"processor_name":"Test Company Limited","collection_format":"software","cb_is_intra_group":"ไม่มี","rp_access_rights":"กำหนดเฉพาะผู้มีสิทธิ์","sec_audit_trail":"Audit","recorder_phone":null,"controller_address":"บริษัทคู่ค้า / ลูกค้า","is_direct_from_subject":null,"cb_transfer_method":"ไม่มี","rp_destruction_method":"เครื่องทำลายเอกสาร/ลบไฟล์ข้อมูล","created_at":"2026-04-22T23:21:54.173830+00:00","recorder_address":null,"activity_name":"ประสานสมัครและจัดการข้อมูลผู้เข้าอบรม","is_direct_from_controller":"true","cb_destination_standard":"ไม่มี","disclosure_without_consent":"ไม่มี","created_by":null,"id":24,"purpose":"การสมัครและเข้ารับการอบรม","indirect_source_detail":null,"dsar_rejection_record":null,"sec_organizational":"จำกัดการเข้าถึงเฉพาะผู้เกี่ยวข้อง","updated_at":null,"request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"พนักงาน","legal_basis":"ฐานปฏิบัติตามเงื่อนไข","cb_section_28_exception":null,"sec_technical":"แชร์ข้อมูลเฉพาะคนที่อยู่ใน Domain บริษัท Netaby และในเครือ","updated_by":null,"status":"Pending","department":null,"minor_under_10":null,"rp_storage_format":null,"sec_physical":"ไม่มี","approved_by":null},{"controller_info":null,"collected_personal_data":"ข้อมูลผู้รับจ้าง ชื่อ-สกุล, เบอร์โทร, อีเมล","minor_10_to_20":null,"rp_storage_method":"One Drive / ใส่แฟ้ม","sec_access_control":"แชร์ข้อมูลเฉพาะคนที่อยู่ใน Domain บริษัท Netaby และในเครือ","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"ไม่มี","rp_retention_period":"2ปี","sec_user_responsibility":"ผู้เกี่ยวข้องสามารถแจ้งขอดูข้อมูล/ขอดาวโหลดข้อมูลได้","recorder_email":null,"processor_name":"Test Company Limited","collection_format":"software","cb_is_intra_group":"ไม่มี","rp_access_rights":"กำหนดเฉพาะผู้มีสิทธิ์","sec_audit_trail":"Audit","recorder_phone":null,"controller_address":"บริษัทคู่ค้า / ลูกค้า","is_direct_from_subject":null,"cb_transfer_method":"ไม่มี","rp_destruction_method":"เครื่องทำลายเอกสาร/ลบไฟล์ข้อมูล","created_at":"2026-04-22T23:21:54.173830+00:00","recorder_address":null,"activity_name":"ดำเนินการตามสัญญาว่าจ้าง","is_direct_from_controller":"true","cb_destination_standard":"ไม่มี","disclosure_without_consent":"ไม่มี","created_by":null,"id":25,"purpose":"เพื่อจัดจ้าง ออกแบบ/พัฒนาระบบ","indirect_source_detail":null,"dsar_rejection_record":null,"sec_organizational":"จำกัดการเข้าถึงเฉพาะผู้เกี่ยวข้อง","updated_at":null,"request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"คู่ค้า","legal_basis":"ฐานปฎิบัตติตามสัญญา","cb_section_28_exception":null,"sec_technical":"แชร์ข้อมูลเฉพาะคนที่อยู่ใน Domain บริษัท Netaby และในเครือ","updated_by":null,"status":"Pending","dep... (set the log level to DEBUG or TRACE to see the full content) 
+ </msg>
+<msg time="2026-04-25T21:31:15.492913" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/ropa/processor/records</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.268954" elapsed="0.223985"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.493081" elapsed="0.000204"/>
+</kw>
+<doc>ทดสอบการดึงข้อมูลรายการ RoPA Processor ทั้งหมด</doc>
+<tag>ropa_processor</tag>
+<status status="PASS" start="2026-04-25T21:31:15.267961" elapsed="0.225423"/>
+</test>
+<test id="s1-s1-s1-s1-t9" name="Verify Delete RoPA Processor Record" line="87">
+<kw name="DELETE On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:15.612250" level="INFO">DELETE Request : url=http://app:8000/api/v1/ropa/processor/records/999 
+ path_url=/api/v1/ropa/processor/records/999 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '0'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:15.612386" level="INFO">DELETE Response : url=http://app:8000/api/v1/ropa/processor/records/999 
+ status=404, reason=Not Found 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:15 GMT', 'server': 'uvicorn', 'content-length': '29', 'content-type': 'application/json', 'x-process-time': '0.11481928825378418'} 
+ body={"detail":"Record not found"} 
+ </msg>
+<msg time="2026-04-25T21:31:15.612563" level="INFO">${response} = &lt;Response [404]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/ropa/processor/records/${TEST_RECORD_ID}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a DELETE request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.494380" elapsed="0.118213"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nDelete Response Status: ${response.status_code}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.612725" elapsed="0.000635"/>
+</kw>
+<doc>ทดสอบการลบข้อมูล Processor (สมมติว่าลบสำเร็จ)</doc>
+<tag>ropa_processor</tag>
+<status status="PASS" start="2026-04-25T21:31:15.493585" elapsed="0.119932"/>
+</test>
+<test id="s1-s1-s1-s1-t10" name="Verify Get All DPO Records" line="97">
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:15.824819" level="INFO">GET Request : url=http://app:8000/api/v1/dpo/records 
+ path_url=/api/v1/dpo/records 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:15.827857" level="INFO">GET Response : url=http://app:8000/api/v1/dpo/records 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:15 GMT', 'server': 'uvicorn', 'content-length': '1169523', 'content-type': 'application/json', 'x-process-time': '0.20337915420532227'} 
+ body=[{"controller_info":"บริษัท การผลิต จำกัด (ผู้ว่าจ้าง)","collected_personal_data":"ชื่อ-นามสกุล, เลขบัญชีธนาคาร, เงินเดือน, เลขประจำตัวผู้เสียภาษี","minor_10_to_20":"No","rp_storage_method":"On-premise Server with Backup","sec_access_control":"Identity Management System","rejection_reason":"-","controller_name":null,"data_type":"Financial Data","cb_is_transferred":"No","rp_retention_period":"10 ปี ตามที่กฎหมายภาษีอากรและกฎหมายบัญชีกำหนด","sec_user_responsibility":"ห้ามทำซ้ำข้อมูลลงในอุปกรณ์ส่วนตัว (USB/Personal Laptop)","recorder_email":"payroll_service@partneraccount.com","processor_name":"บริษัท บัญชีพันธมิตร จำกัด (เราในฐานะ Processor)","collection_format":"Digital (Excel/CSV via Secure Portal)","cb_is_intra_group":"No","rp_access_rights":"Payroll Specialist, Accountant","sec_audit_trail":"Login History และ Transaction Logs","recorder_phone":"02-YYY-YYYY","controller_address":"456 ถนนรัชดาภิเษก เขตห้วยขวาง กรุงเทพฯ","is_direct_from_subject":"No","cb_transfer_method":"N/A","rp_destruction_method":"Shredding (สำหรับเอกสาร) และ Overwriting (สำหรับข้อมูลดิจิทัล)","created_at":null,"recorder_address":"แผนกบริหารค่าจ้าง","activity_name":"การคำนวณเงินเดือนและภาษี (Payroll Processing)","is_direct_from_controller":"Yes","cb_destination_standard":"N/A","disclosure_without_consent":"ส่งข้อมูลให้ธนาคารและกรมสรรพากรตามหน้าที่ในสัญญา","created_by":null,"id":2,"purpose":"เพื่อคำนวณค่าจ้าง ภาษีหัก ณ ที่จ่าย และสวัสดิการต่างๆ ตามคำสั่งของผู้ว่าจ้าง","indirect_source_detail":"Controller ส่งไฟล์ข้อมูลพนักงานให้รายเดือน","dsar_rejection_record":"None","sec_organizational":"NDA (Non-Disclosure Agreement) กับพนักงานทุกคน","updated_at":null,"request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"พนักงานของบริษัทผู้ว่าจ้าง","legal_basis":"Contract (สัญญาจ้างทำของ/จ้างบริการ)","cb_section_28_exception":null,"sec_technical":"Password Protected Files, Database Encryption","updated_by":null,"status":"Approved","department":"IT","minor_under_10":"No","rp_storage_format":null,"sec_physical":"ตู้เก็บเอกสารทนไฟล็อคสองชั้น","approved_by":null},{"controller_info":"","collected_personal_data":"Velit et aliquid ad","minor_10_to_20":"","rp_storage_method":"Quibusdam accusamus ","sec_access_control":"Accusantium exercita","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"false","rp_retention_period":"Eos blanditiis et ve","sec_user_responsibility":"Corporis illo quod i","recorder_email":"chokun@gmail.com","processor_name":"Freya Farrell","collection_format":"Hard Copy","cb_is_intra_group":"true","rp_access_rights":"Tempor recusandae Q","sec_audit_trail":"Eum accusantium dese","recorder_phone":"09800000000","controller_address":"Dolorem inventore ad","is_direct_from_subject":"true","cb_transfer_method":"Ipsum doloribus cup","rp_destruction_method":"Ut consectetur duci","created_at":"2026-04-22T21:35:34.897839+00:00","recorder_address":"TU home","activity_name":"Darrel Baird","is_direct_from_controller":null,"cb_destination_standard":"Dolor ex irure quia ","disclosure_without_consent":"","created_by":"chokunlnwDev","id":3,"purpose":"Voluptatibus aut cil","indirect_source_detail":"","dsar_rejection_record":"","sec_organizational":"Hanson Marshall Trading","updated_at":"2026-04-22T21:36:33.556945+00:00","request_type":"สร้างรายการใหม่","record_type":"Processor","data_subject":"Ut repellendus Nost","legal_basis":"Vital Interest","cb_section_28_exception":null,"sec_technical":"Eu rem incidunt at ","updated_by":"chokunlnwDev","status":"Approved","department":"IT","minor_under_10":"","rp_storage_format":null,"sec_physical":"Duis veniam nostrum","approved_by":null},{"controller_info":"Et atque tempora tem","collected_personal_data":"Cupidatat est nobis","minor_10_to_20":"Adipisicing quo odio","rp_storage_method":"Aspernatur quia et f","sec_access_control":"Consequuntur consect","rejection_reason":null,"controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"true","rp_retention_period":"Occaecat maiores exe","sec_user_responsibility":"Labore nemo ab deser","recorder_email":"chokun@gmail.com","processor_name":null,"collection_format":"Soft File","cb_is_intra_group":"true","rp_access_rights":"Amet ex aut facilis","sec_audit_trail":"Provident voluptati","recorder_phone":"09800000000","controller_address":null,"is_direct_from_subject":"false","cb_transfer_method":"Minim et sed porro m","rp_destruction_method":"Elit in aut quo ut","created_at":"2026-04-22T21:37:34.769246+00:00","recorder_address":"TU home","activity_name":"Hammett Puckett","is_direct_from_controller":null,"cb_destination_standard":"Quia voluptate vel v","disclosure_without_consent":"Dicta nesciunt nemo","created_by":"chokunlnwDev","id":5,"purpose":"Accusantium ipsum i","indirect_source_detail":"","dsar_rejection_record":"Ratione aperiam quib","sec_organizational":"Saunders Schroeder Traders","updated_at":"2026-04-22T21:38:00.792229+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"Sit fugiat sint nost","legal_basis":"Legal Obligation","cb_section_28_exception":null,"sec_technical":"Asperiores similique","updated_by":"chokunlnwDev","status":"Approved","department":"HR","minor_under_10":"Iusto sunt consequat","rp_storage_format":null,"sec_physical":"Et harum minim ut pr","approved_by":null},{"controller_info":"Tenetur officiis cor","collected_personal_data":"Nihil doloremque quo","minor_10_to_20":"Est excepteur omnis ","rp_storage_method":"Cumque molestiae eos","sec_access_control":"Omnis excepteur porr","rejection_reason":"ไม่ครบดกเกดเ","controller_name":null,"data_type":"ข้อมูลอ่อนไหว","cb_is_transferred":"false","rp_retention_period":"Maiores incididunt u","sec_user_responsibility":"Totam unde laborum ","recorder_email":"chokun@gmail.com","processor_name":null,"collection_format":"Soft File","cb_is_intra_group":"true","rp_access_rights":"Eiusmod ducimus ess","sec_audit_trail":"Architecto deleniti ","recorder_phone":"09800000000","controller_address":null,"is_direct_from_subject":"false","cb_transfer_method":"Quis odio reprehende","rp_destruction_method":"Omnis dolor enim seq","created_at":"2026-04-22T21:35:59.271410+00:00","recorder_address":"TU home","activity_name":"Dane Pruitt","is_direct_from_controller":null,"cb_destination_standard":"Aspernatur qui volup","disclosure_without_consent":"Est animi laboriosa","created_by":"chokunlnwDev","id":4,"purpose":"Qui ut consequatur ","indirect_source_detail":"","dsar_rejection_record":"Id esse excepteur a","sec_organizational":"Jackson Whitley Trading","updated_at":"2026-04-23T01:53:30.881219+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"Commodi quis est dol","legal_basis":"Vital Interest","cb_section_28_exception":null,"sec_technical":"Eum non facere neque","updated_by":"chokunlnwDev","status":"Approved","department":"IT","minor_under_10":"Et odit dolores corr","rp_storage_format":null,"sec_physical":"Enim vero occaecat d","approved_by":"chokunlnwDev"},{"controller_info":"บริษัท แฟนตาไซซ์ จำกัด (FANTASIZE Co., Ltd.)","collected_personal_data":"ชื่อ-นามสกุล, เบอร์โทรศัพท์, อีเมล, ประวัติการศึกษา, ประวัติการทำงาน","minor_10_to_20":"Yes (กรณีฝึกงาน)","rp_storage_method":"Google Cloud Storage / Locked Cabinet","sec_access_control":"Username &amp; Password, 2FA","rejection_reason":"-","controller_name":null,"data_type":"General Personal Data","cb_is_transferred":"No","rp_retention_period":"2 ปี หลังจากสิ้นสุดกระบวนการคัดเลือก","sec_user_responsibility":"พนักงานทุกคนต้องผ่านการอบรม PDPA Awareness","recorder_email":"admin_hr@fantasize.com","processor_name":"Internal HR Team","collection_format":"Digital Form &amp; Paper","cb_is_intra_group":"No","rp_access_rights":"HR Manager, Recruitment Team","sec_audit_trail":"Log เก็บประวัติการเข้าถึงข้อมูลย้อนหลัง 90 วัน","recorder_phone":"02-123-4567","controller_address":"999 ถนนพหลโยธิน คลองหนึ่ง ปทุมธานี","is_direct_from_subject":"Yes","cb_transfer_method":"N/A","rp_destruction_method":"ลบไฟล์ดิจิทัลถาวร และทำลายเอกสารด้วยเครื่องย่อยกระดาษ","created_at":"2026-04-22T20:20:21.028456+00:00","recorder_address":"ฝ่ายบุคคล ชั้น 4 สำนักงานใหญ่","activity_name":"การรับสมัครและคัดเลือกพนักงาน (Recruitment)","is_direct_from_controller":"No","cb_destination_standard":"N/A","disclosure_without_consent":"N/A","created_by":null,"id":1,"purpose":"เพื่อใช้ในการพิจารณาคัดเลือก ตรวจสอบคุณสมบัติ และติดต่อสื่อสารกับผู้สมัครงาน","indirect_source_detail":"N/A","dsar_rejection_record":"None","sec_organizational":"กำหนดสิทธิ์การเข้าถึงข้อมูลตามบทบาท (RBAC)","updated_at":"2026-04-22T21:37:01.207812+00:00","request_type":"สร้างรายการใหม่","record_type":"Controller","data_subject":"ผู้สมัครงาน (Applicants)","legal_basis":null,"cb_section_28_exception":null,"sec_technical":"Encryption at rest, SSL/TLS In transit","updated_by":null,"status":"Approved","department":"IT","minor_under_10":"No","rp_storage_format":null,"sec_physical":"ห้องเก็บเอกสารล็อคกุญแจ, กล้องวงจรปิด","approved_by":null},{"controller_info":"","collected_personal_data":"Ipsam alias commodo ","minor_10_to_20":"","rp_storage_method":"Sed commodi odio sin","sec_access_control":"Saepe dolor cillum q","rejection_reason":"dfsdsdfsd","controller_name":null,"data_type":"ข้อมูลทั่วไป","cb_is_transferred":"true","rp_retention_period":"Delectus maiores ei","sec_user_responsibility":"Et pariatur Quam od","recorder_email":"chokun@gmail.com","processor_name":"Valentine Slater","collection_format":"Hard Copy","cb_is_intra_group":"false","rp_access_rights":"Perspiciatis odio q","sec_audit_trail":"Voluptatem maiores h","recorder_phone":"09800000000","controller_address":"Numquam qui minus de","is_direct_from_subject":"true","cb_transfer_method":"Quia sed laborum inv","rp_destruction_method":"Sequi fugiat eos l","created_at":"2026-04-22T21:37:50.398702+00:00","recorder_address":"TU home","activity_name":"Riley Valentine","is_direct_from_controller":null,"cb_destination_standard":"Qui non explicabo Q","disclosure_without_consent":"","created_by":"chokunl... (set the log level to DEBUG or TRACE to see the full content) 
+ </msg>
+<msg time="2026-04-25T21:31:15.828989" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/dpo/records</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.614843" elapsed="0.214170"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.829194" elapsed="0.000198"/>
+</kw>
+<doc>ทดสอบการดึงข้อมูล RoPA ที่รอการอนุมัติสำหรับ DPO</doc>
+<tag>dpo</tag>
+<status status="PASS" start="2026-04-25T21:31:15.613766" elapsed="0.215715"/>
+</test>
+<test id="s1-s1-s1-s1-t11" name="Verify DPO Approve Record" line="103">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-04-25T21:31:15.830722" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.830350" elapsed="0.000392"/>
+</kw>
+<kw name="PUT On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:15.835969" level="INFO">PUT Request : url=http://app:8000/api/v1/dpo/records/999/approve 
+ path_url=/api/v1/dpo/records/999/approve 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '0'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:15.836036" level="INFO">PUT Response : url=http://app:8000/api/v1/dpo/records/999/approve 
+ status=401, reason=Unauthorized 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:15 GMT', 'server': 'uvicorn', 'www-authenticate': 'Bearer', 'content-length': '30', 'content-type': 'application/json', 'x-process-time': '0.0008738040924072266'} 
+ body={"detail":"Not authenticated"} 
+ </msg>
+<msg time="2026-04-25T21:31:15.836438" level="INFO">${response} = &lt;Response [401]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/dpo/records/${TEST_RECORD_ID}/approve</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a PUT request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.830832" elapsed="0.005630"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nApprove Action Status: ${response.status_code}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.836577" elapsed="0.001013"/>
+</kw>
+<doc>ทดสอบ DPO กดอนุมัติรายการ RoPA</doc>
+<tag>dpo</tag>
+<status status="PASS" start="2026-04-25T21:31:15.829676" elapsed="0.008054"/>
+</test>
+<test id="s1-s1-s1-s1-t12" name="Verify Get Dashboard Summary" line="113">
+<kw name="GET On Session" owner="RequestsLibrary">
+<msg time="2026-04-25T21:31:16.125213" level="INFO">GET Request : url=http://app:8000/api/v1/dashboard/summary 
+ path_url=/api/v1/dashboard/summary 
+ headers={'User-Agent': 'python-requests/2.33.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-04-25T21:31:16.125292" level="INFO">GET Response : url=http://app:8000/api/v1/dashboard/summary 
+ status=200, reason=OK 
+ headers={'date': 'Sat, 25 Apr 2026 21:31:15 GMT', 'server': 'uvicorn', 'content-length': '3769', 'content-type': 'application/json', 'x-process-time': '0.28371214866638184'} 
+ body={"statCards":{"total":491,"pending":478,"approved":11,"rejected":2},"deptData":[{"name":"Development","count":1,"Approved":0,"Rejected":0,"Pending":1},{"name":"ไม่ระบุแผนก","count":473,"Approved":5,"Rejected":2,"Pending":466},{"name":"HR","count":2,"Approved":1,"Rejected":0,"Pending":1},{"name":"IT","count":15,"Approved":5,"Rejected":0,"Pending":10}],"legalData":[{"name":"ฐานประโยชน์โดยชอบด้วยกฎหมาย","count":6},{"name":"Legitimate Interest","count":1},{"name":"ฐานความยินยอม","count":27},{"name":"ฐานปฏิบัติตามสัญญา (การเข้าร่วมงาน)","count":24},{"name":"ฐานปฏิบัติตามเงื่อนไข","count":27},{"name":"ฐานปฎิบัตติตามสัญญา","count":27},{"name":"Vital Interest","count":2},{"name":"ฐานปฏิบัติตามกฎหมาย: พระราชบัญญัติการบัญชีฯ กำหนดให้ผู้มีหน้าที่จัดทำบัญชีต้องเก็บรักษาบัญชีและเอกสารที่ต้องใช้ประกอบการลงบัญชีไว้เป็นเวลาไม่น้อยกว่า 5 ปีนับแต่วันปิดบัญชี","count":3},{"name":"ฐานปฏิบัติตามกฎหมาย: พระราชบัญญัติความปลอดภัย อาชีวอนามัย และสภาพแวดล้อมในการทำงาน พ.ศ. 2554 มาตรา 37","count":3},{"name":"ฐานปฏิบัติตามกฎหมาย ได้แก่  ประมวลรัษฎากรกำหนดให้ผู้เสียภาษีต้องเก็บเอกสารทางภาษีไม่น้อยกว่า 5 ปี","count":3},{"name":"ฐานความยินยอม (ความยินยอมโดยชัดแจ้ง)","count":3},{"name":"Contract","count":1},{"name":"ฐานปฏิบัติตามสัญญา (การเข้าใช้บริการ)","count":24},{"name":"Legal Obligation","count":2},{"name":"ประโยชน์โดยชอบด้วยกฎหมาย สำหรับการตรวจสอบติดตามคู่สัญญา","count":3},{"name":"ฐานปฏิบัติตามสัญญา","count":24},{"name":"ไม่มี","count":8},{"name":"ความยินยอม","count":3},{"name":"ฐานปฏิบัติตามสัญญา (ปฏิบัติตามคำขอก่อนเข้าทำสัญญา)","count":24},{"name":"ฐานปฏิบัติตามกฎหมาย: พระราชบัญญัติควบคุมโรคจากการประกอบอาชีพและโรคจากสิ่งแวดล้อม พ.ศ. 2562 มาตรา 29 เพื่อประโยชน์ด้านสาธารณสุข ป้องกันโรคติดต่อ มาตรา 26 (5) (ข)","count":24},{"name":"Contract (สัญญาจ้างทำของ/จ้างบริการ)","count":1},{"name":"ฐานปฏิบัติตามกฎหมาย ได้แก่  พระราชบัญญัติว่าด้วยการกระทำความผิดเกี่ยวกับตอมพิวเตอร์ พ.ศ. 2550 และที่แก้ไขเพิ่มเติม","count":3}]} 
+ </msg>
+<msg time="2026-04-25T21:31:16.125423" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>api_session</arg>
+<arg>/api/v1/dashboard/summary</arg>
+<doc>Sends a GET request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2026-04-25T21:31:15.838899" elapsed="0.286545"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${response}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-04-25T21:31:16.125591" elapsed="0.000222"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nDashboard Data: ${response.json()}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2026-04-25T21:31:16.125959" elapsed="0.000736"/>
+</kw>
+<doc>ทดสอบการดึงข้อมูลภาพรวมสำหรับหน้า Dashboard</doc>
+<tag>dashboard</tag>
+<status status="PASS" start="2026-04-25T21:31:15.838057" elapsed="0.289542"/>
+</test>
+<status status="PASS" start="2026-04-25T21:31:13.859584" elapsed="2.268652"/>
+</suite>
+<status status="PASS" start="2026-04-25T21:31:13.857853" elapsed="2.271290"/>
+</suite>
+<status status="PASS" start="2026-04-25T21:31:13.856169" elapsed="2.273771"/>
+</suite>
+<status status="PASS" start="2026-04-25T21:31:13.824928" elapsed="2.305767"/>
+</suite>
+<statistics>
+<total>
+<stat pass="12" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">auth</stat>
+<stat pass="1" fail="0" skip="0">dashboard</stat>
+<stat pass="2" fail="0" skip="0">dpo</stat>
+<stat pass="2" fail="0" skip="0">ropa_controller</stat>
+<stat pass="3" fail="0" skip="0">ropa_processor</stat>
+<stat pass="3" fail="0" skip="0">users</stat>
+</tag>
+<suite>
+<stat name="Tests" id="s1" pass="12" fail="0" skip="0">Tests</stat>
+<stat name="Backend" id="s1-s1" pass="12" fail="0" skip="0">Tests.Backend</stat>
+<stat name="Tests" id="s1-s1-s1" pass="12" fail="0" skip="0">Tests.Backend.Tests</stat>
+<stat name="Api Tests" id="s1-s1-s1-s1" pass="12" fail="0" skip="0">Tests.Backend.Tests.Api Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
